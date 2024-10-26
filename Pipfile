@@ -7,6 +7,9 @@ name = "pypi"
 requests = "*"
 numpy = "*"
 pandas = "*"
+jupyter = "*"
+bs4 = "*"
+datetime = "*"
 
 [dev-packages]
 
