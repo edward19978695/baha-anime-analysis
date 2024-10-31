@@ -11,6 +11,10 @@ jupyter = "*"
 bs4 = "*"
 datetime = "*"
 selenium = "*"
+gspread = "*"
+pyyaml = "*"
+gspread-dataframe = "*"
+gspread-formatting = "*"
 
 [dev-packages]
 
