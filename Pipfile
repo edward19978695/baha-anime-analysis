@@ -15,6 +15,10 @@ gspread = "*"
 pyyaml = "*"
 gspread-dataframe = "*"
 gspread-formatting = "*"
+wordcloud = "*"
+jieba = "*"
+fastapi = "*"
+uvicorn = "*"
 
 [dev-packages]
 

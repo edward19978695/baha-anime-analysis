@@ -4,9 +4,10 @@ scope = [
     'https://www.googleapis.com/auth/drive'
 ]
 
-sheetname = 'Baha Anime Analysis'
+sheetname = '巴哈動畫分析 / Baha Anime Analysis'
 tabnames = ['Anime-Level Data',
-            'Episode-Level Data']
+            'Episode-Level Data',
+            'Episode Trend Analysis']
 
 
 column_names = {
@@ -35,6 +36,7 @@ column_names = {
         'uploaded_time': '上架時間',
 
         'view': '觀看數',
-        'comment_count': '評論數'
+        'comment_count': '評論數',
+        'danmu_count': '彈幕數'
     }
 }

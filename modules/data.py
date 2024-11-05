@@ -148,42 +148,39 @@ class WebCrawl:
         return df_all_anime
 
     def episode_detail(self, name, link):
-        # # Set up headless mode
-        # options = Options()
-        # options.add_argument('--headless')  # Run Chrome in headless mode
-        # options.add_argument('--no-sandbox')
-        # options.add_argument('--disable-dev-shm-usage')
-        #
-        # # Set up Selenium with the WebDriver
-        # driver = webdriver.Chrome(options=options)  # or use webdriver.Firefox() if you're using Firefox
-        #
-        # # Open the target URL
-        # driver.get(link)
-        # time.sleep(1)
-        #
-        # # Episode title, view, uploaded time
-        # episode_item = driver.find_element(By.CLASS_NAME, 'anime_name')
-        # episode_soup = BeautifulSoup(episode_item.get_attribute('innerHTML'), 'html.parser')
+        # Set up headless mode
+        options = Options()
+        options.add_argument('--headless')  # Run Chrome in headless mode
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
 
-        res = requests.get(link, headers=self.headers)
-        soup = BeautifulSoup(res.text, 'html.parser')
-        episode_soup = soup.select_one('.anime_name')
+        # Set up Selenium with the WebDriver
+        driver = webdriver.Chrome(options=options)  # or use webdriver.Firefox() if you're using Firefox
 
-        episode_name = episode_soup.select_one('h1').text.replace(name, '').strip()
-        uploaded_time = pd.to_datetime(episode_soup.select_one('.uploadtime').text.replace(
+        # Open the target URL
+        driver.get(link)
+        time.sleep(np.random.uniform(1, 2))
+
+        # Episode title, view, uploaded time
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        episode_name = soup.select_one('.anime_name > h1').text.replace(name, '').strip()
+        uploaded_time = pd.to_datetime(soup.select_one('.uploadtime').text.replace(
             '上架時間：', '').strip()).strftime('%Y-%m-%d %H:%M')
 
-        view = episode_soup.select('span')[-1].text
+        view = soup.select_one('.newanime-count > span').text
         view = float(view.replace('萬', '')) * 10000 if '萬' in view else view
         view = int(view) if view != '統計中' else None
 
-        # Episode comment counts
-        # comment_item = driver.find_element(By.CLASS_NAME, 'filter-nav')
-        # comment_soup = BeautifulSoup(comment_item.get_attribute('innerHTML'), 'html.parser')
+        # Comment and Danmu counts
+        comment_count = re.search(r'\d+', soup.find(id='w-anime-comment-count').text)
+        comment_count = int(comment_count.group()) if comment_count is not None else 0
 
-        comment_soup = soup.select_one('.filter-nav')
-        comment_count = comment_soup.select_one('h5').text.replace('則留言', '').strip()
-        comment_count = int(comment_count) if len(comment_count) > 0 else 0
+        danmu = soup.select_one('.anime-tip')
+        if danmu is None:
+            danmu_count = 0
+        else:
+            danmu_count = re.search(r'\d+', danmu.text)
+            danmu_count = int(danmu_count.group()) if danmu_count is not None else 0
 
         # # Wait until the element with class 'danmu-scroll' is present
         # wait = WebDriverWait(driver, 10)  # Adjust the timeout as needed
@@ -200,8 +197,7 @@ class WebCrawl:
         #     danmu_count = re.search(r'\d+', danmu_text).group()
         #     danmu_count = int(danmu_count) if len(danmu_count) > 0 else 0
 
-        # return episode_name, uploaded_time, view, comment_count, danmu_count
-        return episode_name, uploaded_time, view, comment_count
+        return episode_name, uploaded_time, view, comment_count, danmu_count
 
     def all_episode(self):
         df_all_anime = pd.read_csv('./data/all_anime.csv')
@@ -221,7 +217,8 @@ class WebCrawl:
             for link in episode_links:
                 for attempt in range(3):  # Allows one retry attempt
                     try:
-                        (episode_name, uploaded_time, view, comment_count) = self.episode_detail(anime_name, link)
+                        (episode_name, uploaded_time,
+                         view, comment_count, danmu_count) = self.episode_detail(anime_name, link)
 
                         # Append the data if extraction was successful
                         e = {
@@ -230,13 +227,14 @@ class WebCrawl:
                             'episode_link': link,
                             'uploaded_time': uploaded_time,
                             'view': view,
-                            'comment_count': comment_count
+                            'comment_count': comment_count,
+                            'danmu_count': danmu_count
                         }
                         all_episode_list.append(e)
 
                         # Add a time delay
-                        time.sleep(1)
-                        print(f'Successfully extracted episode {episode_name}!!')
+                        # time.sleep(np.random.uniform(0.5, 1.5))
+                        print(f'''Successfully extracted episode {episode_name} {link} with ({view}, {comment_count}, {danmu_count})!!''')
                         break  # Exit loop if successful
 
                     except Exception as e:
@@ -381,6 +379,6 @@ class UpdateSheet:
 if __name__ == '__main__':
     print('Start Crawling and Importing data to spreadsheet...')
     us = UpdateSheet()
-    us.anime_level()
+    # us.anime_level()
     us.episode_level()
     print('Finish!!!!!')
