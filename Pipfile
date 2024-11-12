@@ -19,6 +19,11 @@ wordcloud = "*"
 jieba = "*"
 fastapi = "*"
 uvicorn = "*"
+bert-extractive-summarizer = "*"
+transformers = "*"
+spacy = "*"
+torch = "*"
+scikit-learn = "*"
 
 [dev-packages]
 
