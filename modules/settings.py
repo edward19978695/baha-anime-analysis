@@ -7,7 +7,8 @@ scope = [
 sheetname = '巴哈動畫分析 / Baha Anime Analysis'
 tabnames = ['Anime-Level Data',
             'Episode-Level Data',
-            'Episode Trend Analysis']
+            'Episode Trend Analysis',
+            'Anime Recommendation']
 
 
 column_names = {

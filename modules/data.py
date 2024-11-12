@@ -24,6 +24,7 @@ import requests
 import yaml
 import pytz
 import re
+import ast
 import modules.settings as settings
 
 with open('conf/app.yml') as f:
@@ -182,21 +183,6 @@ class WebCrawl:
             danmu_count = re.search(r'\d+', danmu.text)
             danmu_count = int(danmu_count.group()) if danmu_count is not None else 0
 
-        # # Wait until the element with class 'danmu-scroll' is present
-        # wait = WebDriverWait(driver, 10)  # Adjust the timeout as needed
-        # danmu_item = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'danmu-scroll')))
-        #
-        # danmu_soup = BeautifulSoup(danmu_item.get_attribute('innerHTML'), 'html.parser')
-        # danmu_soup = danmu_soup.select_one('.anime-tip')
-        #
-        # # Locate the text containing the danmu count
-        # if danmu_soup is None:
-        #     danmu_count = 0
-        # else:
-        #     danmu_text = danmu_soup.find(string=lambda x: x and "本動畫共" in x and "筆彈幕" in x)
-        #     danmu_count = re.search(r'\d+', danmu_text).group()
-        #     danmu_count = int(danmu_count) if len(danmu_count) > 0 else 0
-
         return episode_name, uploaded_time, view, comment_count, danmu_count
 
     def all_episode(self):
@@ -234,7 +220,8 @@ class WebCrawl:
 
                         # Add a time delay
                         # time.sleep(np.random.uniform(0.5, 1.5))
-                        print(f'''Successfully extracted episode {episode_name} {link} with ({view}, {comment_count}, {danmu_count})!!''')
+                        print(
+                            f'''Successfully extracted episode {episode_name} {link} with ({view}, {comment_count}, {danmu_count})!!''')
                         break  # Exit loop if successful
 
                     except Exception as e:
@@ -261,6 +248,8 @@ class UpdateSheet:
         column_names = settings.column_names['anime_level']
         df_all_anime = df_all_anime.sort_values('first_launched_date', ascending=False, ignore_index=True)
 
+        # df_all_anime['types'] = df_all_anime['types'].apply(ast.literal_eval)
+        df_all_anime['types'] = df_all_anime['types'].apply(lambda x: '、'.join(x))
         df_all_anime = df_all_anime.fillna('')
 
         # Step 1: Convert all values to string and handle encoding issues
