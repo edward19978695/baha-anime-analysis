@@ -41,3 +41,9 @@ column_names = {
         'danmu_count': '彈幕數'
     }
 }
+
+parameter_map = {
+    '新作優先': 'scaled_launch',
+    '高分優先': 'scaled_score',
+    '人氣優先': 'scaled_view'
+}

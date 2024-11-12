@@ -48,6 +48,7 @@ class AnimeRecommend:
         df_anime[['scaled_launch', 'scaled_view', 'scaled_score']] = scaler.fit_transform(
             df_anime[['scaled_launch', 'scaled_view', 'scaled_score']])
 
+        print('Finish reading and transform anime data!!!')
         return df_anime.copy()
 
     def jaccard_similarity(self, set1, set2):
@@ -74,11 +75,18 @@ class AnimeRecommend:
                     similarity_matrix[c, r] = similarity
 
         similarity_df = pd.DataFrame(similarity_matrix, index=df_anime['name'], columns=df_anime['name'])
+        print('Finish computing similarity score!!!')
         return similarity_df.copy()
 
-    def anime_recommend(self, target_anime, parameters):
+    def anime_recommend(self):
         similarity_df = self.similarity_df.copy()
         df_anime = self.df_anime.copy()
+
+        target_anime = self.worksheet.get_values('B1:D1')[0]
+        target_anime = [t for t in target_anime if t != '']
+        parameters = self.worksheet.get_values('A6')[0]
+        parameters = [settings.parameter_map[p] for p in parameters if p != '']
+        print('Obtained the target animes and metrics.')
 
         # Get the row corresponding to the target anime
         target_similarities = similarity_df.loc[:, target_anime]
@@ -93,5 +101,6 @@ class AnimeRecommend:
         # Sort the similarities in descending order and get the top 5 most similar anime
         top_recommend_anime = target_similarities.sort_values('main_metric', ascending=False).head(12)
         top_recommend_anime = top_recommend_anime.reset_index()
+        print('Determine recommended anime!!!')
 
         return top_recommend_anime.apply(lambda row: f'=HYPERLINK("{row['link']}", "{row['name']}")', axis=1)

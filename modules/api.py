@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from modules.review_analysis import ReviewAnalysis
+from modules.recommend import AnimeRecommend
 
 
 # Define a Pydantic model for the input
@@ -13,6 +14,7 @@ app = FastAPI(title='Baha Anime Anlysis API',
               description='API to compute comment and danmu word frequency.')
 
 ra = ReviewAnalysis()
+ar = AnimeRecommend()
 
 
 # @app.get('/', description='Root endpoint for testing.')
@@ -42,3 +44,18 @@ async def count_word_freq(request: LinkRequest):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post('/anime_recommend', description='Recommend animations based on similarity and other metrics.')
+async def recommend_anime():
+    try:
+        # Clear and update the worksheet as before
+        ar.worksheet.batch_clear(['B6:G6', 'B11:G11'])
+
+        animes = ar.anime_recommend()
+        ar.worksheet.update(range_name='B6:G6', values=[list(animes[:6])], raw=False)
+        ar.worksheet.update(range_name='B11:G11', values=[list(animes[6:])], raw=False)
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
