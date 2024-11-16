@@ -1,4 +1,4 @@
-service_account_file = 'conf/anime-analysis-440305-a2070891547c.json'
+service_account_file = 'conf/anime-analysis-440305-e98f2c850a51.json'
 scope = [
     'https://www.googleapis.com/auth/spreadsheets',
     'https://www.googleapis.com/auth/drive'
@@ -23,13 +23,14 @@ column_names = {
         'avg_view': '平均觀看次數',
         'score': '評分',
         'score_count': '評分人數',
-        # 'score_rate': '評分率',
+        'score_rate': '評分轉換率',
 
         'author': '原作者',
         'agent': '代理商',
         'animator': '動畫公司',
         'director': '導演',
-        'types': '類型'
+        'types': '類型',
+        'intro': '簡介'
     },
     'episode_level': {
         'anime_name': '動畫名稱',
