@@ -11,8 +11,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
 from collections import Counter
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
 import gspread
 
 dict_file = './words/dict.txt'
@@ -129,44 +127,3 @@ class ReviewAnalysis:
         self.worksheet.update(range_name=sheetrange, values=header + values, raw=False)
 
         return df_freq
-
-
-# Define a Pydantic model for the input
-class LinkRequest(BaseModel):
-    anime_name: str
-    episode_name: str
-
-
-app = FastAPI(title='Baha Anime Anlysis API',
-              description='API to compute comment and danmu word frequency.')
-
-ra = ReviewAnalysis()
-
-
-# @app.get('/', description='Root endpoint for testing.')
-# async def get_root():
-#     return {}
-
-
-@app.post('/word_freq',
-          description='Count word frequency')
-async def count_word_freq(request: LinkRequest):
-    try:
-        ra.worksheet.batch_clear(['B:E'])
-        df = ra.df_episode.copy()
-        anime_name = request.anime_name
-        episode_name = request.episode_name
-        print('Get episode link...')
-        link = df.loc[(df['anime_name'] == anime_name) &
-                      (df['episode_name'] == episode_name), 'episode_link'].iloc[0]
-
-        ra.dynamic_web_page(link)
-        danmus = ra.danmu_crawler()
-        ra.word_freq(text_list=danmus, type='danmu')
-
-        comments = ra.comment_crawler()
-        ra.word_freq(text_list=comments, type='comment')
-
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))

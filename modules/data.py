@@ -1,5 +1,6 @@
 from datetime import datetime
 from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -24,6 +25,7 @@ import requests
 import yaml
 import pytz
 import re
+import ast
 import modules.settings as settings
 
 with open('conf/app.yml') as f:
@@ -34,10 +36,11 @@ class WebCrawl:
     def __init__(self):
         self.url = app_config['website']['url']
         self.user_agent = app_config['website']['user_agent']
-        self.headers = {'User-Agent': self.user_agent}
+        # self.user_agent = UserAgent()
+        # self.headers = {'User-Agent': self.user_agent}
 
     def anime_author(self, link):
-        res = requests.get(link, headers=self.headers)
+        res = requests.get(link, headers={'User-Agent': self.user_agent})
         res.raise_for_status()
 
         soup = BeautifulSoup(res.text, 'html.parser')
@@ -45,7 +48,7 @@ class WebCrawl:
         return author
 
     def anime_detail(self, link):
-        res = requests.get(link, headers=self.headers)
+        res = requests.get(link, headers={'User-Agent': self.user_agent})
         soup = BeautifulSoup(res.text, 'html.parser')
 
         # Score value and counts
@@ -65,17 +68,20 @@ class WebCrawl:
         animator = anime_types[3].select_one('p').text
         types = [typ.text for typ in anime_types[4].select('li')]
 
+        # Anime intro
+        intro = soup.select_one('.data-intro > p').text.split('\r＜')[0].strip()
+
         link_button = soup.select_one('.link > .link-button').get('href')
         author = self.anime_author('https:' + link_button)
 
-        return score, score_count, first_launched_date, author, director, agent, animator, types
+        return score, score_count, first_launched_date, author, director, agent, animator, types, intro
 
     def all_anime(self):
         all_anime_list = []
         next_page = ''
         while not next_page.startswith('javascript:alert'):
             res = requests.get(self.url + 'animeList.php' + next_page,
-                               headers=self.headers)
+                               headers={'User-Agent': self.user_agent})
             res.raise_for_status()
 
             soup = BeautifulSoup(res.text, 'html.parser')
@@ -111,10 +117,13 @@ class WebCrawl:
 
                 # Anime details
                 (score, score_count, first_launched_date,
-                 author, director, agent, animator, types) = self.anime_detail(link)
+                 author, director, agent, animator, types, intro) = self.anime_detail(link)
 
-                # # Compute rate of score count over total view
-                # score_rate = score_count / total_view if total_view is not None else None
+                # Compute rate of score count over total view
+                try:
+                    score_rate = score_count / total_view
+                except:
+                    score_rate = None
 
                 a = {
                     'name': name,
@@ -125,23 +134,24 @@ class WebCrawl:
                     'link': link,
                     'score': score,
                     'score_count': score_count,
-                    # 'score_rate': score_rate,
+                    'score_rate': score_rate,
                     'first_launched_date': first_launched_date,
                     'author': author,
                     'director': director,
                     'agent': agent,
                     'animator': animator,
-                    'types': types
+                    'types': types,
+                    'intro': intro
                 }
                 all_anime_list.append(a)
 
                 # Add a time delay
-                time.sleep(2)
+                time.sleep(np.random.uniform(1, 3))
 
             next_page = soup.select_one('.next').get('href')
 
             # Add a time delay
-            time.sleep(2)
+            time.sleep(np.random.uniform(1, 3))
 
         df_all_anime = pd.DataFrame(all_anime_list)
         df_all_anime.to_csv('./data/all_anime.csv', index=False)
@@ -182,21 +192,6 @@ class WebCrawl:
             danmu_count = re.search(r'\d+', danmu.text)
             danmu_count = int(danmu_count.group()) if danmu_count is not None else 0
 
-        # # Wait until the element with class 'danmu-scroll' is present
-        # wait = WebDriverWait(driver, 10)  # Adjust the timeout as needed
-        # danmu_item = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'danmu-scroll')))
-        #
-        # danmu_soup = BeautifulSoup(danmu_item.get_attribute('innerHTML'), 'html.parser')
-        # danmu_soup = danmu_soup.select_one('.anime-tip')
-        #
-        # # Locate the text containing the danmu count
-        # if danmu_soup is None:
-        #     danmu_count = 0
-        # else:
-        #     danmu_text = danmu_soup.find(string=lambda x: x and "本動畫共" in x and "筆彈幕" in x)
-        #     danmu_count = re.search(r'\d+', danmu_text).group()
-        #     danmu_count = int(danmu_count) if len(danmu_count) > 0 else 0
-
         return episode_name, uploaded_time, view, comment_count, danmu_count
 
     def all_episode(self):
@@ -207,7 +202,7 @@ class WebCrawl:
             anime_link = row['link']
             print(f'Start exploring each episode of {anime_name}...')
 
-            res = requests.get(anime_link, headers=self.headers)
+            res = requests.get(anime_link, headers={'User-Agent': self.user_agent})
             soup = BeautifulSoup(res.text, 'html.parser')
 
             episodes = soup.select('.season > ul > li > a')
@@ -234,7 +229,8 @@ class WebCrawl:
 
                         # Add a time delay
                         # time.sleep(np.random.uniform(0.5, 1.5))
-                        print(f'''Successfully extracted episode {episode_name} {link} with ({view}, {comment_count}, {danmu_count})!!''')
+                        print(
+                            f'''Successfully extracted episode {episode_name} {link} with ({view}, {comment_count}, {danmu_count})!!''')
                         break  # Exit loop if successful
 
                     except Exception as e:
@@ -261,6 +257,8 @@ class UpdateSheet:
         column_names = settings.column_names['anime_level']
         df_all_anime = df_all_anime.sort_values('first_launched_date', ascending=False, ignore_index=True)
 
+        # df_all_anime['types'] = df_all_anime['types'].apply(ast.literal_eval)
+        df_all_anime['types'] = df_all_anime['types'].apply(lambda x: '、'.join(x))
         df_all_anime = df_all_anime.fillna('')
 
         # Step 1: Convert all values to string and handle encoding issues
@@ -379,6 +377,6 @@ class UpdateSheet:
 if __name__ == '__main__':
     print('Start Crawling and Importing data to spreadsheet...')
     us = UpdateSheet()
-    # us.anime_level()
-    us.episode_level()
+    us.anime_level()
+    # us.episode_level()
     print('Finish!!!!!')
