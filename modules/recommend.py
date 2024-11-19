@@ -18,6 +18,8 @@ class AnimeRecommend:
         self.spreadsheet = self.client.open(settings.sheetname)
         self.worksheet = self.spreadsheet.worksheet(settings.tabnames[3])
         self.df_anime = self.read_anime_data()
+        self.anime_type_similarity = pd.read_csv('data/anime_type_similarity.csv')
+        self.anime_intro_similarity = pd.read_csv('data/anime_intro_similarity.csv')
         # self.similarity_df = self.compute_similarity_score()
 
     def read_anime_data(self):
@@ -124,10 +126,11 @@ class AnimeRecommend:
         cosine_sim_df.to_csv('data/anime_intro_similarity.csv')
 
     def anime_recommend(self):
-        anime_type_similarity = pd.read_csv('data/anime_type_similarity.csv')
+        print('Start deciding recommend anime...')
+        anime_type_similarity = self.anime_type_similarity.copy()
         anime_type_similarity = anime_type_similarity.set_index('name')
 
-        anime_intro_similarity = pd.read_csv('data/anime_intro_similarity.csv')
+        anime_intro_similarity = self.anime_intro_similarity.copy()
         anime_intro_similarity = anime_intro_similarity.set_index('name')
 
         df_anime = self.df_anime.copy()
@@ -139,18 +142,24 @@ class AnimeRecommend:
         print('Obtained the target animes and metrics.')
 
         # Get the row corresponding to the target anime
-        target_similarities = anime_type_similarity.loc[:, target_anime]
+        target_similarities = pd.concat([anime_type_similarity[target_anime],
+                                         anime_intro_similarity[target_anime]], axis=1).mean(axis=1)
+        target_similarities = target_similarities.reset_index().rename(columns={0: 'similarity_score'})
+        print('Finish merging two types of similarity scores!')
 
         scaled_metrics = df_anime.loc[:, ['name', 'scaled_launch', 'scaled_view', 'scaled_score', 'link']]
-        scaled_metrics = scaled_metrics.set_index('name')
+        # scaled_metrics = scaled_metrics.set_index('name')
 
-        target_similarities.loc[:, ['scaled_launch', 'scaled_view', 'scaled_score', 'link']] = scaled_metrics
+        target_similarities = target_similarities.merge(scaled_metrics, on='name', how='inner')
+        # target_similarities[['scaled_launch', 'scaled_view', 'scaled_score', 'link']] = scaled_metrics
+        print('Append other scaled metrics!')
 
-        target_similarities['main_metric'] = target_similarities[target_anime + parameters].mean(axis=1)
+        target_similarities['main_metric'] = target_similarities[['similarity_score'] + parameters].mean(axis=1)
+        print('Finish computing main metric!')
 
         # Sort the similarities in descending order and get the top 5 most similar anime
         top_recommend_anime = target_similarities.sort_values('main_metric', ascending=False).head(12)
-        top_recommend_anime = top_recommend_anime.reset_index()
+        # top_recommend_anime = top_recommend_anime.reset_index()
         print('Determine recommended anime!!!')
 
         return top_recommend_anime.apply(lambda row: f'=HYPERLINK("{row['link']}", "{row['name']}")', axis=1)
