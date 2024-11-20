@@ -4,7 +4,7 @@ scope = [
     'https://www.googleapis.com/auth/drive'
 ]
 
-sheetname = '巴哈動畫分析 / Baha Anime Analysis'
+sheetname = '巴哈動畫瘋分析 / Animation Crazy Analysis'
 tabnames = ['Anime-Level Data',
             'Episode-Level Data',
             'Episode Trend Analysis',
