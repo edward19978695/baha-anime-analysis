@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import gspread
 import ast
+import os
 import modules.settings as settings
 
 
@@ -18,9 +19,8 @@ class AnimeRecommend:
         self.spreadsheet = self.client.open(settings.sheetname)
         self.worksheet = self.spreadsheet.worksheet(settings.tabnames[3])
         self.df_anime = self.read_anime_data()
-        self.anime_type_similarity = pd.read_csv('data/anime_type_similarity.csv')
-        self.anime_intro_similarity = pd.read_csv('data/anime_intro_similarity.csv')
-        # self.similarity_df = self.compute_similarity_score()
+        self.anime_type_similarity = self.load_type_similarity_socre()
+        self.anime_intro_similarity = self.load_intro_similarity_score()
 
     def read_anime_data(self):
         df_anime = pd.read_csv('data/all_anime.csv')
@@ -55,6 +55,11 @@ class AnimeRecommend:
         print('Finish reading and transform anime data!!!')
         return df_anime.copy()
 
+    def load_type_similarity_socre(self):
+        if not os.path.exists('data/anime_type_similarity.csv'):
+            self.compute_type_similarity_score()
+        return pd.read_csv('data/anime_type_similarity.csv')
+
     def jaccard_similarity(self, set1, set2):
         # Function to compute Jaccard similarity
         intersection = len(set1.intersection(set2))
@@ -82,6 +87,11 @@ class AnimeRecommend:
         print('Finish computing anime type similarity score!!!')
         similarity_df.to_csv('data/anime_type_similarity.csv')
         # return similarity_df.copy()
+
+    def load_intro_similarity_score(self):
+        if not os.path.exists('data/anime_intro_similarity.csv'):
+            self.compute_intro_similarity_score()
+        return pd.read_csv('data/anime_intro_similarity.csv')
 
     def compute_intro_similarity_score(self):
         # Load the tokenizer and model
