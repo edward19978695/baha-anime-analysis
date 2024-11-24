@@ -1,11 +1,9 @@
+"""
+Module that contains objects of crawling data from websites and update Google Sheet.
+"""
 from datetime import datetime
 from bs4 import BeautifulSoup
-from fake_useragent import UserAgent
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
 from google.oauth2.service_account import Credentials
 from gspread_formatting import (
@@ -14,8 +12,6 @@ from gspread_formatting import (
     set_frozen,
     set_row_height
 )
-
-import logging
 import gspread
 import gspread.utils
 import time
@@ -25,7 +21,6 @@ import requests
 import yaml
 import pytz
 import re
-import ast
 import modules.settings as settings
 
 with open('conf/app.yml') as f:
@@ -33,13 +28,19 @@ with open('conf/app.yml') as f:
 
 
 class WebCrawl:
+    """
+    A class that crawls animation data.
+    """
+
     def __init__(self):
-        self.url = app_config['website']['url']
+        self.url = app_config['website']['url']  # Animation Crazy url
         self.user_agent = app_config['website']['user_agent']
-        # self.user_agent = UserAgent()
-        # self.headers = {'User-Agent': self.user_agent}
 
     def anime_author(self, link):
+        """
+        :param link: url of animation details
+        :return: author name
+        """
         res = requests.get(link, headers={'User-Agent': self.user_agent})
         res.raise_for_status()
 
@@ -48,6 +49,12 @@ class WebCrawl:
         return author
 
     def anime_detail(self, link):
+        """
+        Crawl more details of animation
+
+        :param link: first episode link
+        :return: score, launched date, author...
+        """
         res = requests.get(link, headers={'User-Agent': self.user_agent})
         soup = BeautifulSoup(res.text, 'html.parser')
 
@@ -77,9 +84,13 @@ class WebCrawl:
         return score, score_count, first_launched_date, author, director, agent, animator, types, intro
 
     def all_anime(self):
+        """
+        Crawl animation-level data and store them locally
+        """
         all_anime_list = []
-        next_page = ''
+        next_page = ''  # initial next page token
         while not next_page.startswith('javascript:alert'):
+            # 所有動畫：from first to last page
             res = requests.get(self.url + 'animeList.php' + next_page,
                                headers={'User-Agent': self.user_agent})
             res.raise_for_status()
@@ -89,6 +100,7 @@ class WebCrawl:
             anime_items = anime_items.select('.theme-list-main')
 
             for anime in anime_items:
+                # For each animation in current page
                 # Anime Name
                 name = anime.select_one('.theme-name').text.strip()
                 print(f'Start digging anime {name}....')
@@ -158,6 +170,13 @@ class WebCrawl:
         return df_all_anime
 
     def episode_detail(self, name, link):
+        """
+        Crawl details of episode through dynamic web page.
+
+        :param name: anime name
+        :param link: episode url
+        :return: episode_name, uploaded_time, view, comment_count, danmu_count
+        """
         # Set up headless mode
         options = Options()
         options.add_argument('--headless')  # Run Chrome in headless mode
@@ -195,9 +214,14 @@ class WebCrawl:
         return episode_name, uploaded_time, view, comment_count, danmu_count
 
     def all_episode(self):
+        """
+        Crawl episode-level data and store them locally.
+        """
+        # Fist load anime-level data
         df_all_anime = pd.read_csv('./data/all_anime.csv')
         all_episode_list = []
         for i, row in df_all_anime.iterrows():
+            # For each animation
             anime_name = row['name']
             anime_link = row['link']
             print(f'Start exploring each episode of {anime_name}...')
@@ -210,6 +234,7 @@ class WebCrawl:
                 if len(episodes) > 0 else [anime_link]
 
             for link in episode_links:
+                # For each episode in certain animation
                 for attempt in range(3):  # Allows one retry attempt
                     try:
                         (episode_name, uploaded_time,
@@ -243,6 +268,9 @@ class WebCrawl:
 
 
 class UpdateSheet:
+    """
+    A class that updates Anime and Episode-level data in Google Sheet.
+    """
     def __init__(self):
         # Authenticate with Google
         self.creds = Credentials.from_service_account_file(settings.service_account_file,
@@ -252,6 +280,9 @@ class UpdateSheet:
         self.wc = WebCrawl()
 
     def anime_level(self):
+        """
+        Update Anime-level data tab.
+        """
         df_all_anime = self.wc.all_anime()
         print('Finish extracting data from web, start import data to spreadsheet...')
         column_names = settings.column_names['anime_level']
@@ -317,6 +348,9 @@ class UpdateSheet:
         worksheet.update_acell('B1', now)
 
     def episode_level(self):
+        """
+        Update Episode-level tab.
+        """
         df_all_episode = self.wc.all_episode()
         print('Finish extracting data from web, start import data to spreadsheet...')
         column_names = settings.column_names['episode_level']
@@ -343,7 +377,8 @@ class UpdateSheet:
         worksheet = self.spreadsheet.worksheet(settings.tabnames[1])
 
         # Get existing frozen rows
-        frozen_rows = get_frozen_row_count(worksheet) or 4
+        # frozen_rows = get_frozen_row_count(worksheet) or 4
+        frozen_rows = 4
 
         # Clean sheet
         worksheet.clear_basic_filter()
@@ -378,5 +413,5 @@ if __name__ == '__main__':
     print('Start Crawling and Importing data to spreadsheet...')
     us = UpdateSheet()
     us.anime_level()
-    # us.episode_level()
+    us.episode_level()
     print('Finish!!!!!')

@@ -1,16 +1,20 @@
-service_account_file = 'conf/anime-analysis-440305-e98f2c850a51.json'
+"""
+Global settings are managed here.
+"""
+service_account_file = 'conf/anime-analysis-440305-e98f2c850a51.json'   # credential key from google console
 scope = [
     'https://www.googleapis.com/auth/spreadsheets',
     'https://www.googleapis.com/auth/drive'
 ]
 
-sheetname = '巴哈動畫分析 / Baha Anime Analysis'
-tabnames = ['Anime-Level Data',
+sheetname = '巴哈動畫瘋分析 / Animation Crazy Analysis'    # Google spreadsheet name
+tabnames = ['Anime-Level Data',                          # Google sheet tab names
             'Episode-Level Data',
             'Episode Trend Analysis',
             'Anime Recommendation']
 
 
+# mapping to column names displayed in google sheet
 column_names = {
     'anime_level': {
         'name': '動畫名稱',

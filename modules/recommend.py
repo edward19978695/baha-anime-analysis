@@ -1,3 +1,6 @@
+"""
+Module that contains class and methods to compute similarity scores and recommend animations.
+"""
 from google.oauth2.service_account import Credentials
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.metrics.pairwise import cosine_similarity
@@ -6,6 +9,7 @@ import pandas as pd
 import numpy as np
 import gspread
 import ast
+import os
 import modules.settings as settings
 
 
@@ -18,9 +22,16 @@ class AnimeRecommend:
         self.spreadsheet = self.client.open(settings.sheetname)
         self.worksheet = self.spreadsheet.worksheet(settings.tabnames[3])
         self.df_anime = self.read_anime_data()
-        # self.similarity_df = self.compute_similarity_score()
+        self.anime_type_similarity = self.load_type_similarity_socre()
+        self.anime_intro_similarity = self.load_intro_similarity_score()
 
     def read_anime_data(self):
+        """
+        Load anime level data and map some key metrics to [0, 1] interval.
+        1. Launched date: convert to int -> standardize -> exp transform -> min-max scale
+        2. Total view: nature log transform -> min-max scale
+        3. Score: standardize -> exp transform -> min-max scale
+        """
         df_anime = pd.read_csv('data/all_anime.csv')
 
         # Convert to list type
@@ -53,6 +64,14 @@ class AnimeRecommend:
         print('Finish reading and transform anime data!!!')
         return df_anime.copy()
 
+    def load_type_similarity_socre(self):
+        """
+        Load anime-type similarity scores.
+        """
+        if not os.path.exists('data/anime_type_similarity.csv'):
+            self.compute_type_similarity_score()
+        return pd.read_csv('data/anime_type_similarity.csv')
+
     def jaccard_similarity(self, set1, set2):
         # Function to compute Jaccard similarity
         intersection = len(set1.intersection(set2))
@@ -60,6 +79,9 @@ class AnimeRecommend:
         return intersection / union
 
     def compute_type_similarity_score(self):
+        """
+        Compute Jaccard similarity score for each pair of anime types
+        """
         df_anime = self.df_anime.copy()
 
         # Create an empty list to store the results
@@ -81,7 +103,21 @@ class AnimeRecommend:
         similarity_df.to_csv('data/anime_type_similarity.csv')
         # return similarity_df.copy()
 
+    def load_intro_similarity_score(self):
+        """
+        Load anime-intro similarity score.
+        """
+        if not os.path.exists('data/anime_intro_similarity.csv'):
+            self.compute_intro_similarity_score()
+        return pd.read_csv('data/anime_intro_similarity.csv')
+
     def compute_intro_similarity_score(self):
+        """
+        1. Load BERT based model
+        2. Extract each anime introduction as a feature vector(<- CLS token)
+        3. Compute cosine similarity between each pair of feature vectors
+        4. Min-max scale: map similarity scores to [0, 1]
+        """
         # Load the tokenizer and model
         tokenizer = BertTokenizer.from_pretrained("hfl/chinese-roberta-wwm-ext")
         model = BertModel.from_pretrained("hfl/chinese-roberta-wwm-ext")
@@ -123,40 +159,57 @@ class AnimeRecommend:
         print('Finish computing anime intro similarity score!!')
         cosine_sim_df.to_csv('data/anime_intro_similarity.csv')
 
-    def anime_recommend(self):
-        anime_type_similarity = pd.read_csv('data/anime_type_similarity.csv')
+    def anime_recommend(self, target_anime, parameters):
+        """
+        Based on user selected animations and preference parameters,
+        this method will return some recommended animations
+        1. Combine two sources of similarity scores of all target animations (anime-types & anime-intro)
+        2. Average the similarity score and preference parameters as final main metrics
+        3. Return top 12 animations as recommendation
+
+        :param target_anime: list of anime names user selected
+        :param parameters: list of preference parameters
+        :return: list of recommended anime with hyperlink
+        """
+        print('Start deciding recommend anime...')
+        anime_type_similarity = self.anime_type_similarity.copy()
         anime_type_similarity = anime_type_similarity.set_index('name')
 
-        anime_intro_similarity = pd.read_csv('data/anime_intro_similarity.csv')
+        anime_intro_similarity = self.anime_intro_similarity.copy()
         anime_intro_similarity = anime_intro_similarity.set_index('name')
 
         df_anime = self.df_anime.copy()
 
-        target_anime = self.worksheet.get_values('B1:D1')[0]
         target_anime = [t for t in target_anime if t != '']
-        parameters = self.worksheet.get_values('A6')[0]
         parameters = [settings.parameter_map[p] for p in parameters if p != '']
         print('Obtained the target animes and metrics.')
 
         # Get the row corresponding to the target anime
-        target_similarities = anime_type_similarity.loc[:, target_anime]
+        target_similarities = pd.concat([anime_type_similarity[target_anime],
+                                         anime_intro_similarity[target_anime]], axis=1).mean(axis=1)
+        target_similarities = target_similarities.reset_index().rename(columns={0: 'similarity_score'})
+        print('Finish merging two types of similarity scores!')
 
         scaled_metrics = df_anime.loc[:, ['name', 'scaled_launch', 'scaled_view', 'scaled_score', 'link']]
-        scaled_metrics = scaled_metrics.set_index('name')
+        # scaled_metrics = scaled_metrics.set_index('name')
 
-        target_similarities.loc[:, ['scaled_launch', 'scaled_view', 'scaled_score', 'link']] = scaled_metrics
+        target_similarities = target_similarities.merge(scaled_metrics, on='name', how='inner')
+        # target_similarities[['scaled_launch', 'scaled_view', 'scaled_score', 'link']] = scaled_metrics
+        print('Append other scaled metrics!')
 
-        target_similarities['main_metric'] = target_similarities[target_anime + parameters].mean(axis=1)
+        target_similarities['main_metric'] = target_similarities[['similarity_score'] + parameters].mean(axis=1)
+        print('Finish computing main metric!')
 
         # Sort the similarities in descending order and get the top 5 most similar anime
         top_recommend_anime = target_similarities.sort_values('main_metric', ascending=False).head(12)
-        top_recommend_anime = top_recommend_anime.reset_index()
+        # top_recommend_anime = top_recommend_anime.reset_index()
         print('Determine recommended anime!!!')
 
         return top_recommend_anime.apply(lambda row: f'=HYPERLINK("{row['link']}", "{row['name']}")', axis=1)
 
 
 if __name__ == '__main__':
+    # Re-compute type and intro similarity scores.
     ar = AnimeRecommend()
     ar.compute_type_similarity_score()
     ar.compute_intro_similarity_score()
