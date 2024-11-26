@@ -1,14 +1,11 @@
 # Animation Crazy Analysis
 
-Animation Crazy ([巴哈姆特動畫瘋](https://ani.gamer.com.tw/)) is one of the most popular Japanese animation streaming
-platform in Taiwan.
-As a big user of it, I have built this project to crawl some anime viewing data and also utilize these information to
-built other functionalities like review analysis and anime recommendation.
-The results could be viewed in
-the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+Animation Crazy ([巴哈姆特動畫瘋](https://ani.gamer.com.tw/)) is one of the most popular Japanese animation streaming platforms in Taiwan.  
+As a frequent user, I built this project to crawl anime viewing data and utilize this information to develop functionalities like review analysis and anime recommendations.  
+The results can be viewed in this [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
 
-**Disclaimer:**
-This project is developed for personal interests, isn't used on any business purposes.
+**Disclaimer:**  
+This project is developed purely out of personal interest and is not intended for commercial use.
 
 ---
 
@@ -25,61 +22,59 @@ This project is developed for personal interests, isn't used on any business pur
 ---
 
 ## Web Crawler <a name="webCrawler"></a>
-Coding details could be seen in `data.py` script in `modules` folder.
+Details of the implementation can be found in the `data.py` script in the `modules` folder.
 
 ### 1. Anime-level <a name="animeLevel"></a>
 
-All animations that are authorized could be seen in all anime list ([所有動畫](https://ani.gamer.com.tw/animeList.php)) tab of Animation Crazy website.
-![All Anime](plots/all_anime_list.png)
-As the above screenshot shows, we could scratch anime's `total view`, `total episodes`, ... etc information.
-While click into each anime, could also get more detail metrics includes `launched date`, `score`, ... etc.
-![Anime Details](plots/anime_detail.png)
-All these information could be easily scratch through static web crawl methods (`requests` and `BeautifulSoup`) and
-results are stored at **Anime-Level Data** tab
-of [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
-Below is the simple explanation of each column:
+All authorized animations can be found on the "All Anime List" ([所有動畫](https://ani.gamer.com.tw/animeList.php)) tab of the Animation Crazy website.  
+![All Anime](plots/all_anime_list.png)  
+As shown in the screenshot, we can extract information such as `total views`, `total episodes`, etc. Additionally, by clicking on an individual anime, more detailed metrics like `launch date`, `score`, and more can be retrieved.  
+![Anime Details](plots/anime_detail.png)  
 
-| **Column** | **Explanation**                                                                            |
-|------------|--------------------------------------------------------------------------------------------|
-| 動畫名稱       | The animation name                                                                         |
-| 縮圖         | The thumbnail                                                                              |
-| 首播日期       | The first launched data                                                                    |
-| 總集數        | Total episode count                                                                        |
-| 總觀看次數      | Total viewed count                                                                         |
-| 平均觀看次數     | Total viewed count / Total episode count                                                   |
-| 評分         | The score of anime                                                                         |
-| 評分人數       | Total scored count                                                                         |
-| 評分轉換率      | Total scored count / Total viewed count : the tendency of scoring after viewing the anime. |
-| 原作者        | The author of original.                                                                    |
-| 代理商        | The agency.                                                                                |
-| 動畫公司       | The anime creating company.                                                                |
-| 導演         | The director.                                                                              |
-| 類型         | The types of anime.                                                                        |
-| 簡介         | The introduction of anime.                                                                 |
+This information is collected using static web scraping techniques (`requests` and `BeautifulSoup`) and stored in the **Anime-Level Data** tab of the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing). Below is a brief explanation of each column:
 
-
-
-### 2. Episode-level <a name="episodeLevel"></a>
-For each episode of an anime, it also has its own metrics like `view count`, `danmu count`(彈幕數), `comment count`, ... etc.
-![Episode metrics](plots/episode-metrics.png)
-However, as the screenshot above shows, danmu count information is drop in a scroll drop element.
-This time we have to use dynamic web scratch method like `selenium` to obtain those metrics and results are store in **Episode-Level Data** tab in [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing). 
-Below are also some simple explanation of columns:
-
-| **Column** | **Explanation**                                                                   |
-|------------|-----------------------------------------------------------------------------------|
-| 動畫名稱       | The animation name                                                                |
-| 集數         | The episod name.                                                                  |
-| 上架時間       | The uploaded time of the episode                                                  |
-| 觀看數        | The view count of episode                                                         |
-| 評論數        | The comment count of episode                                                      |
-| 評論轉換率      | Comment count / View count : the tendency of commenting after viewing the episode |
-| 彈幕數        | The danmu count                                                                   |
-| 彈幕轉換率      | Danmu count / View count : the tendency of sending danmu while watching episode   |
-
+| **Column**   | **Explanation**                                                                                   |
+|--------------|---------------------------------------------------------------------------------------------------|
+| 動畫名稱       | The name of the animation.                                                                         |
+| 縮圖         | The thumbnail of the animation.                                                                     |
+| 首播日期       | The premiere date of the animation.                                                               |
+| 總集數        | The total number of episodes.                                                                      |
+| 總觀看次數      | The total view count.                                                                             |
+| 平均觀看次數     | The average view count per episode (`total views / total episodes`).                              |
+| 評分         | The overall rating of the animation.                                                               |
+| 評分人數       | The total number of ratings.                                                                      |
+| 評分轉換率      | Rating conversion rate (`total ratings / total views`): measures the tendency to rate after watching. |
+| 原作者        | The author of the original work.                                                                   |
+| 代理商        | The licensing agency.                                                                              |
+| 動畫公司       | The production company of the animation.                                                          |
+| 導演         | The director of the animation.                                                                     |
+| 類型         | The genres of the animation.                                                                       |
+| 簡介         | A brief description of the animation.                                                              |
 
 [Back to Contents](#contents)
 
+---
+
+
+### 2. Episode-level <a name="episodeLevel"></a>
+Each episode of an anime also includes metrics such as `view count`, `danmu count` (彈幕數), `comment count`, and more.  
+![Episode Metrics](plots/episode-metrics.png)  
+
+As shown above, the `danmu count` is located within a scrolldown element. To retrieve this information, dynamic web scraping techniques using `selenium` are required.  
+The results are stored in the **Episode-Level Data** tab of the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing). Below is a brief explanation of each column:
+
+| **Column**   | **Explanation**                                                                 |
+|--------------|---------------------------------------------------------------------------------|
+| 動畫名稱       | The name of the animation.                                                     |
+| 集數         | The episode name.                                                              |
+| 上架時間       | The upload time of the episode.                                               |
+| 觀看數        | The view count of the episode.                                                |
+| 評論數        | The comment count of the episode.                                             |
+| 評論轉換率      | Comment conversion rate (`comments / views`): measures the tendency to comment after watching. |
+| 彈幕數        | The number of danmu (user-generated subtitles/comments overlaid on the video). |
+| 彈幕轉換率      | Danmu conversion rate (`danmu / views`): measures the tendency to send danmu while watching. |
+
+[Back to Contents](#contents)
 
 ---
 
