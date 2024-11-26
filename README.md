@@ -12,8 +12,14 @@ This project is developed for personal interests, isn't used on any business pur
 
 ---
 
-## Table of contents
+## Contents <a name="contents"></a>
 - [Web Crawler](#webCrawler)
+  1. [Anime-level](#animeLevel)
+  2. [Episode-level](#episodeLevel)
+- [Review Analysis](#reviewAnalysis)
+- [Recommendation System](#recommendation)
+- [APIs](#apis)
+- [Google Sheet Development](#googleSheet)
 
 
 ---
@@ -21,7 +27,7 @@ This project is developed for personal interests, isn't used on any business pur
 ## Web Crawler <a name="webCrawler"></a>
 Coding details could be seen in `data.py` script in `modules` folder.
 
-### 1. Anime-level
+### 1. Anime-level <a name="animeLevel"></a>
 
 All animations that are authorized could be seen in all anime list ([所有動畫](https://ani.gamer.com.tw/animeList.php)) tab of Animation Crazy website.
 ![All Anime](plots/all_anime_list.png)
@@ -53,7 +59,7 @@ Below is the simple explanation of each column:
 
 
 
-### 2. Episode-level
+### 2. Episode-level <a name="episodeLevel"></a>
 For each episode of an anime, it also has its own metrics like `view count`, `danmu count`(彈幕數), `comment count`, ... etc.
 ![Episode metrics](plots/episode-metrics.png)
 However, as the screenshot above shows, danmu count information is drop in a scroll drop element.
@@ -72,19 +78,34 @@ Below are also some simple explanation of columns:
 | 彈幕轉換率      | Danmu count / View count : the tendency of sending danmu while watching episode   |
 
 
+[Back to Contents](#contents)
+
 
 ---
 
-## Review Analysis
+## Review Analysis <a name="reviewAnalysis"></a>
+
+
+[Back to Contents](#contents)
 
 ---
 
-## Recommendation System
+## Recommendation System <a name="recommendation"></a>
+
+
+[Back to Contents](#contents)
 
 ---
 
-## APIs
+## APIs <a name="apis"></a>
+
+
+[Back to Contents](#contents)
 
 ---
 
-## Google Sheet Development
+## Google Sheet Development <a name="googleSheet"></a>
+
+
+
+[Back to Contents](#contents)
