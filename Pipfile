@@ -25,6 +25,7 @@ spacy = "*"
 torch = "*"
 scikit-learn = "*"
 fake-useragent = "*"
+statsmodels = "*"
 
 [dev-packages]
 
