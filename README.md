@@ -14,7 +14,7 @@ This project is developed purely out of personal interest and is not intended fo
   1. [Anime-level Data](#animeLevel)
   2. [Episode-level Data](#episodeLevel)
 - [Exploratory Data Analysis](#eda)
-  1. [Do Shorter Anime Get More Scoring Rates?](#scoreRateObserve)
+  1. [Viewers Are More Likely to Score Fewer-Episode Anime](#scoreRateObserve)
 - [Extra Functionalities](#functions)
   1. [Review Analysis](#reviewAnalysis)
   2. [Recommendation System](#recommendation)
@@ -86,22 +86,24 @@ The results are stored in the **Episode-Level Data** tab of the [Google Sheet](h
 ## Exploratory Data Analysis <a name="eda"></a>
 After scraping data from the [Animation Crazy](https://ani.gamer.com.tw/) website, I conducted some exploratory data analysis (EDA) to gain insights from the data.
 
-### i. Do Shorter Anime Get More Scoring Rates? <a name="scoreRateObserve"></a>
+### i. Viewers Are More Likely to Score Fewer-Episode Anime  <a name="scoreRateObserve"></a>
 When I sorted the animations by the scoring conversion rate (`total scorings / total views`) in descending order, I noticed that the top-rated animations were not necessarily the most popular ones, but rather those with fewer episodes. This led me to an interesting question: Are shorter anime more likely to trigger viewers to rate?
 
 ![score rate order](plots/score_rate_order.png)
 
-Intuitively, this makes sense—once a viewer finishes watching a short anime, they are more likely to leave a rating, as it's easier to complete. However, I wanted to verify this assumption statistically.
+Intuitively, this makes sense: viewers are more likely to leave a rating after finishing the entire anime, and this process is easier with a fewer-episode anime. However, I wanted to confirm this assumption with statistical analysis.
 
 First, I calculated the correlation coefficient between `total episodes` and `scoring rate`, which came out to be around `-20%`. To further investigate whether this negative correlation is statistically significant, I built a regression model with `scoring rate` as the response variable and `total episodes` as the predictor.
 
 ![summary table](plots/summary-table.png)
 
-Although the P-value is quite small, the large number of observations (animation counts) compared to the number of parameters might make the result appear significant due to the sheer sample size. To address this concern, I designed a simple experiment: I randomly sampled 100 animations and built regression models based on their `scoring rate` and `total episodes`, recording the P-value and the correlation coefficient for each. This experiment was repeated 100 times, and the results are as follows:
+Although the P-value is quite small, the large number of observations (animations) relative to the number of parameters might make the result seem significant simply because of the sample size. To test this, I designed an experiment: I randomly selected 100 animations and built regression models based on their `scoring rate` and `total episodes`. I recorded the P-value and correlation coefficient for each model. This process was repeated 100 times, and the results are shown below:
+
 
 ![episode to score rate](plots/ep_count_to_score_rate_experiment.jpg)
 
-As shown in the above plots, all experiments revealed a negative correlation between `scoring rate` and `total episodes`, with most results being statistically significant. Therefore, I can conclude that viewers are indeed more willing to rate shorter anime with fewer episodes.
+As shown in the plots above, all experiments demonstrated a negative correlation between `scoring rate` and `total episodes`, with most results being statistically significant. Therefore, I can conclude that viewers are more likely to score anime with fewer episodes.
+
 
 [Back to Contents](#contents)
 
