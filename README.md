@@ -123,11 +123,13 @@ This led me to another assumption: Do viewers tend to leave comments when they w
 
 To verify this, I used `commenting rate` as the response variable and `score` as the predictor to check if there's a significant negative relationship between the two.
 
-For the experiment, I randomly sampled 500 episodes, using their `commenting rate` and `score` to build regression models. I recorded the P-values and correlation coefficients for each sample, and the results are shown in the following plot:
+The experiment method is similar to the previous one, but this time, I used `commenting rate` and `score` as variables. For each round, I randomly sampled 500 episodes, built regression models, and recorded the P-values and correlation coefficients. The results are shown in the following plot:
 
 ![score to comment rate](plots/score_to_comment_rate_experiment.jpg)
 
-Unlike the previous experiment, only a small proportion of the experiments showed significant results, and the correlations appeared random. While the comments for **極速星舞** mainly criticize it as a bad animation, this behavior seems to be a special case, rather than a general trend for all low-rated animations. Therefore, I conclude that viewers are not necessarily more likely to leave comments for all poorly-rated anime, but rather, this is specific to **極速星舞**.
+Unlike the previous experiment, only a small proportion of the experiments showed significant results, and the correlation coefficients appeared random. 
+
+While the comments for **極速星舞** mainly criticize it as a bad animation, this behavior seems to be a special case, rather than a general trend for all low-rated animations. Therefore, I conclude that viewers are not necessarily more likely to leave comments for all poorly-rated anime, but rather, this is specific to **極速星舞**.
 
 
 [Back to Contents](#contents)
