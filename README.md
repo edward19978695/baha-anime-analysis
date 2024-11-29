@@ -14,7 +14,8 @@ This project is developed purely out of personal interest and is not intended fo
   1. [Anime-level Data](#animeLevel)
   2. [Episode-level Data](#episodeLevel)
 - [Exploratory Data Analysis](#eda)
-  1. [Viewers Are More Likely to Score Fewer-Episode Anime](#scoreRateObserve)
+  1. [Viewers Are More Likely to Score Fewer-Episode Anime?](#scoreRateObserve)
+  2. [Viewers Are More Likely to Comment on Bad Animations?](#commentRateObserve)
 - [Extra Functionalities](#functions)
   1. [Review Analysis](#reviewAnalysis)
   2. [Recommendation System](#recommendation)
@@ -103,6 +104,30 @@ Although the P-value is quite small, the large number of observations (animation
 ![episode to score rate](plots/ep_count_to_score_rate_experiment.jpg)
 
 As shown in the plots above, all experiments demonstrated a negative correlation between `scoring rate` and `total episodes`, with most results being statistically significant. Therefore, I can conclude that viewers are more likely to score anime with fewer episodes.
+
+
+[Back to Contents](#contents)
+
+---
+### ii. Viewers Are More Likely to Comment on Bad Animations <a name="commentRateObserve"></a>
+
+In this analysis, I sorted episodes by their comment conversion rate (`comments / views`) in descending order. I noticed that an anime called **極速星舞** (HIGHSPEED Etoile) had several episodes with a surprisingly high commenting rate compared to other animations.
+
+![comment rate order](plots/comment-rate-order.png)
+
+However, **極速星舞** is not a famous anime at all. I was curious about why viewers of this anime were so willing to leave comments. Then I discovered that the anime's score was only 1.5 out of 5, one of the lowest scores on Animation Crazy.
+
+![highspeed score](plots/highspeed-score.png)
+
+This led me to another assumption: Do viewers tend to leave comments when they watch a bad anime?
+
+To verify this, I used `commenting rate` as the response variable and `score` as the predictor to check if there's a significant negative relationship between the two.
+
+For the experiment, I randomly sampled 500 episodes, using their `commenting rate` and `score` to build regression models. I recorded the P-values and correlation coefficients for each sample, and the results are shown in the following plot:
+
+![score to comment rate](plots/score_to_comment_rate_experiment.jpg)
+
+Unlike the previous experiment, only a small proportion of the experiments showed significant results, and the correlations appeared random. While the comments for **極速星舞** mainly criticize it as a bad animation, this behavior seems to be a special case, rather than a general trend for all low-rated animations. Therefore, I conclude that viewers are not necessarily more likely to leave comments for all poorly-rated anime, but rather, this is specific to **極速星舞**.
 
 
 [Back to Contents](#contents)
