@@ -14,7 +14,7 @@ This project is developed purely out of personal interest and is not intended fo
   1. [Anime-level Data](#animeLevel)
   2. [Episode-level Data](#episodeLevel)
 - [Exploratory Data Analysis](#eda)
-  1. [Do Shorter Anime Get More Scoring Rates?](#score rate observe)
+  1. [Do Shorter Anime Get More Scoring Rates?](#scoreRateObserve)
 - [Extra Functionalities](#functions)
   1. [Review Analysis](#reviewAnalysis)
   2. [Recommendation System](#recommendation)
@@ -29,9 +29,11 @@ Details of the implementation can be found in the `data.py` script in the `modul
 ### i. Anime-level Data <a name="animeLevel"></a>
 
 All authorized animations can be found on the "All Anime List" ([所有動畫](https://ani.gamer.com.tw/animeList.php)) tab of the Animation Crazy website.  
+
 ![All Anime](plots/all_anime_list.png)    
 
 As shown in the screenshot, we can extract information such as `total views`, `total episodes`, etc. Additionally, by clicking on an individual anime, more detailed metrics like `launch date`, `score`, and more can be retrieved.  
+
 ![Anime Details](plots/anime_detail.png)
 
 This information is collected using static web scraping techniques (`requests` and `BeautifulSoup`) and stored in the **Anime-Level Data** tab of the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing). Below is a brief explanation of each column:
@@ -61,6 +63,7 @@ This information is collected using static web scraping techniques (`requests` a
 
 ### ii. Episode-level Data <a name="episodeLevel"></a>
 Each episode of an anime also includes metrics such as `view count`, `danmu count` (彈幕數), `comment count`, and more.  
+
 ![Episode Metrics](plots/episode-metrics.png)  
 
 As shown above, the `danmu count` is located within a scrolldown element. To retrieve this information, dynamic web scraping techniques using `selenium` are required. 
@@ -83,16 +86,19 @@ The results are stored in the **Episode-Level Data** tab of the [Google Sheet](h
 ## Exploratory Data Analysis <a name="eda"></a>
 After scraping data from the [Animation Crazy](https://ani.gamer.com.tw/) website, I conducted some exploratory data analysis (EDA) to gain insights from the data.
 
-### i. Do Shorter Anime Get More Scoring Rates? <a name="score rate observe"></a>
+### i. Do Shorter Anime Get More Scoring Rates? <a name="scoreRateObserve"></a>
 When I sorted the animations by the scoring conversion rate (`total scorings / total views`) in descending order, I noticed that the top-rated animations were not necessarily the most popular ones, but rather those with fewer episodes. This led me to an interesting question: Are shorter anime more likely to trigger viewers to rate?
+
 ![score rate order](plots/score_rate_order.png)
 
 Intuitively, this makes sense—once a viewer finishes watching a short anime, they are more likely to leave a rating, as it's easier to complete. However, I wanted to verify this assumption statistically.
 
 First, I calculated the correlation coefficient between `total episodes` and `scoring rate`, which came out to be around `-20%`. To further investigate whether this negative correlation is statistically significant, I built a regression model with `scoring rate` as the response variable and `total episodes` as the predictor.
+
 ![summary table](plots/summary-table.png)
 
 Although the P-value is quite small, the large number of observations (animation counts) compared to the number of parameters might make the result appear significant due to the sheer sample size. To address this concern, I designed a simple experiment: I randomly sampled 100 animations and built regression models based on their `scoring rate` and `total episodes`, recording the P-value and the correlation coefficient for each. This experiment was repeated 100 times, and the results are as follows:
+
 ![episode to score rate](plots/ep_count_to_score_rate_experiment.jpg)
 
 As shown in the above plots, all experiments revealed a negative correlation between `scoring rate` and `total episodes`, with most results being statistically significant. Therefore, I can conclude that viewers are indeed more willing to rate shorter anime with fewer episodes.
@@ -119,14 +125,17 @@ This functionality can be accessed through the **Episode Trend Analysis** tab in
 ### Example: Attack on Titan - Spoiler Alert!  
 In the **Episode Trend Analysis** tab, users can select their preferred anime to view both numeric trends and a chart displaying episode performance. 
 To analyze reviews for a specific episode, users must select the episode and press the designated button to trigger the review analysis.
+
 ![Episode Trend](plots/episode-trend.png)
 
 Below is an example of a review analysis for a selected episode:  
+
 ![Review Analysis](plots/review-analysis.png)
 
 During my first run of this analysis, I noticed that **o7** (a text-based emoji representing a salute 🫡) was the most frequent word in the danmus. 
 This reminded me of the scene where Hange (漢吉) sacrifices herself to buy time for the flying boat. Many viewers expressed their respect by flooding the danmus with **o7**. 
 It was incredibly satisfying to see how this functionality captured that emotional moment for me.  
+
 ![AOT Danmu](plots/aot-danmu.png)
 
 **Observations:**  
