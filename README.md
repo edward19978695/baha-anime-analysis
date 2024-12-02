@@ -16,7 +16,7 @@ This project is developed purely out of personal interest and is not intended fo
 - [Exploratory Data Analysis](#eda)
   1. [Viewers Are More Likely to Score Fewer-Episode Anime?](#scoreRateObserve)
   2. [Viewers Are More Likely to Comment on Bad Animations?](#commentRateObserve)
-- [Extra Functionalities](#functions)
+- [API Functionalities](#functions)
   1. [Review Analysis](#reviewAnalysis)
   2. [Recommendation System](#recommendation)
 - [Google Sheet Development](#googleSheet)
@@ -123,7 +123,7 @@ This led me to another assumption: Do viewers tend to leave comments when they w
 
 To verify this, I used `commenting rate` as the response variable and `score` as the predictor to check if there's a significant negative relationship between the two.
 
-The experiment method is similar to the previous one, but this time, I used `commenting rate` and `score` as variables. For each round, I randomly sampled 500 episodes, built regression models, and recorded the P-values and correlation coefficients. The results are shown in the following plot:
+The experiment method is similar to the previous one, but this time, I used `commenting rate` and `score` as variables. The P-value and correlation results are shown in the following plot:
 
 ![score to comment rate](plots/score_to_comment_rate_experiment.jpg)
 
@@ -136,7 +136,7 @@ While the comments for **極速星舞** mainly criticize it as a bad animation, 
 
 ---
 
-## Extra Functionalities <a name="functions"></a>
+## API Functionalities <a name="functions"></a>
 Using the data scraped from [Animation Crazy](https://ani.gamer.com.tw/) webpages, I developed two core functionalities and implemented them as API endpoints using `FastAPI`. 
 The implementation details can be found in the `api.py`, `review_analysis.py`, and `recommend.py` scripts within the `modules` folder.
 
