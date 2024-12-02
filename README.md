@@ -14,12 +14,13 @@ This project is developed purely out of personal interest and is not intended fo
   1. [Anime-level Data](#animeLevel)
   2. [Episode-level Data](#episodeLevel)
 - [Exploratory Data Analysis](#eda)
-  1. [Viewers Are More Likely to Score Fewer-Episode Anime?](#scoreRateObserve)
+  1. [Viewers Are More Likely to Score Fewer-Episode Animations?](#scoreRateObserve)
   2. [Viewers Are More Likely to Comment on Bad Animations?](#commentRateObserve)
-- [API Functionalities](#functions)
+- [Extra Functionalities](#functions)
   1. [Review Analysis](#reviewAnalysis)
   2. [Recommendation System](#recommendation)
 - [Google Sheet Development](#googleSheet)
+- [References](#ref)
 
 
 ---
@@ -85,9 +86,10 @@ The results are stored in the **Episode-Level Data** tab of the [Google Sheet](h
 
 ---
 ## Exploratory Data Analysis <a name="eda"></a>
-After scraping data from the [Animation Crazy](https://ani.gamer.com.tw/) website, I conducted some exploratory data analysis (EDA) to gain insights from the data.
+After scraping data from the [Animation Crazy](https://ani.gamer.com.tw/) website, I conducted some exploratory data analysis (EDA) to gain insights from the data. 
+The implementation details can be found in the `eda.py` script within the `modules` folder.
 
-### i. Viewers Are More Likely to Score Fewer-Episode Anime  <a name="scoreRateObserve"></a>
+### i. Viewers Are More Likely to Score Fewer-Episode Animations  <a name="scoreRateObserve"></a>
 When I sorted the animations by the scoring conversion rate (`total scorings / total views`) in descending order, I noticed that the top-rated animations were not necessarily the most popular ones, but rather those with fewer episodes. This led me to an interesting question: Are shorter anime more likely to trigger viewers to rate?
 
 ![score rate order](plots/score_rate_order.png)
@@ -136,7 +138,7 @@ While the comments for **極速星舞** mainly criticize it as a bad animation, 
 
 ---
 
-## API Functionalities <a name="functions"></a>
+## Extra Functionalities <a name="functions"></a>
 Using the data scraped from [Animation Crazy](https://ani.gamer.com.tw/) webpages, I developed two core functionalities and implemented them as API endpoints using `FastAPI`. 
 The implementation details can be found in the `api.py`, `review_analysis.py`, and `recommend.py` scripts within the `modules` folder.
 
@@ -197,3 +199,11 @@ However, it performs less effectively for analyzing comments, as they are often 
 
 
 [Back to Contents](#contents)
+
+## References <a name="ref"></a>
+- [[Python爬蟲實例] 巴哈姆特 動畫瘋：新手入門基礎網路爬蟲教學](https://blog.jiatool.com/posts/gamer_ani_spider/)
+- [Dynamic Web Page Scraping With Python: A Guide to Scrape All Content](https://www.zenrows.com/blog/dynamic-web-pages-scraping-python#what-is-dynamic-website)
+- [Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index)
+- [結巴(jieba)斷詞台灣繁體版本](https://github.com/ldkrsi/jieba-zh_TW)
+- [Chinese BERT with Whole Word Masking](https://github.com/ymcui/Chinese-BERT-wwm)
+- [Authentication — gspread 6.1.2 documentation](https://docs.gspread.org/en/latest/oauth2.html)
