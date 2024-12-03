@@ -1,8 +1,11 @@
 # Animation Crazy Analysis
 
-Animation Crazy ([巴哈姆特動畫瘋](https://ani.gamer.com.tw/)) is one of the most popular Japanese animation streaming platforms in Taiwan.  
-As a frequent user, I built this project to crawl anime viewing data and utilize this information to develop functionalities like review analysis and anime recommendations.  
-The results can be viewed in this [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+Animation Crazy ([巴哈姆特動畫瘋](https://ani.gamer.com.tw/)) is one of the most popular Japanese animation streaming
+platforms in Taiwan.  
+As a frequent user, I built this project to crawl anime viewing data and utilize this information to develop
+functionalities like review analysis and anime recommendations.  
+The results can be viewed in
+this [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
 
 **Disclaimer:**  
 This project is developed purely out of personal interest and is not intended for commercial use.
@@ -10,38 +13,44 @@ This project is developed purely out of personal interest and is not intended fo
 ---
 
 ## Contents <a name="contents"></a>
+
 - [Web Crawler](#webCrawler)
-  1. [Anime-level Data](#animeLevel)
-  2. [Episode-level Data](#episodeLevel)
+    1. [Anime-level Data](#animeLevel)
+    2. [Episode-level Data](#episodeLevel)
 - [Exploratory Data Analysis](#eda)
-  1. [Viewers Are More Likely to Score Fewer-Episode Animations?](#scoreRateObserve)
-  2. [Viewers Are More Likely to Comment on Bad Animations?](#commentRateObserve)
+    1. [Viewers Are More Likely to Score Fewer-Episode Animations?](#scoreRateObserve)
+    2. [Viewers Are More Likely to Comment on Bad Animations?](#commentRateObserve)
 - [Extra Functionalities](#functions)
-  1. [Review Analysis](#reviewAnalysis)
-  2. [Recommendation System](#recommendation)
+    1. [Review Analysis](#reviewAnalysis)
+    2. [Recommendation System](#recommendation)
 - [Google Sheet Development](#googleSheet)
 - [References](#ref)
-
 
 ---
 
 ## Web Crawler <a name="webCrawler"></a>
+
 Details of the implementation can be found in the `data.py` script in the `modules` folder.
 
 ### i. Anime-level Data <a name="animeLevel"></a>
 
-All authorized animations can be found on the "All Anime List" ([所有動畫](https://ani.gamer.com.tw/animeList.php)) tab of the Animation Crazy website.  
+All authorized animations can be found on the "All Anime List" ([所有動畫](https://ani.gamer.com.tw/animeList.php)) tab
+of the Animation Crazy website.
 
-![All Anime](plots/all_anime_list.png)    
+![All Anime](plots/all_anime_list.png)
 
-As shown in the screenshot, we can extract information such as `total views`, `total episodes`, etc. Additionally, by clicking on an individual anime, more detailed metrics like `launch date`, `score`, and more can be retrieved.  
+As shown in the screenshot, we can extract information such as `total views`, `total episodes`, etc. Additionally, by
+clicking on an individual anime, more detailed metrics like `launch date`, `score`, and more can be retrieved.
 
 ![Anime Details](plots/anime_detail.png)
 
-This information is collected using static web scraping techniques (`requests` and `BeautifulSoup`) and stored in the **Anime-Level Data** tab of the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing). Below is a brief explanation of each column:
+This information is collected using static web scraping techniques (`requests` and `BeautifulSoup`) and stored in the *
+*Anime-Level Data** tab of
+the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+Below is a brief explanation of each column:
 
-| **Column**   | **Explanation**                                                                                          |
-|--------------|----------------------------------------------------------------------------------------------------------|
+| **Column** | **Explanation**                                                                                          |
+|------------|----------------------------------------------------------------------------------------------------------|
 | 動畫名稱       | The name of the animation.                                                                               |
 | 縮圖         | The thumbnail of the animation.                                                                          |
 | 首播日期       | The premiere date of the animation.                                                                      |
@@ -62,116 +71,153 @@ This information is collected using static web scraping techniques (`requests` a
 
 ---
 
-
 ### ii. Episode-level Data <a name="episodeLevel"></a>
-Each episode of an anime also includes metrics such as `view count`, `danmu count` (彈幕數), `comment count`, and more.  
 
-![Episode Metrics](plots/episode-metrics.png)  
+Each episode of an anime also includes metrics such as `view count`, `danmu count` (彈幕數), `comment count`, and more.
 
-As shown above, the `danmu count` is located within a scrolldown element. To retrieve this information, dynamic web scraping techniques using `selenium` are required. 
-The results are stored in the **Episode-Level Data** tab of the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing). Below is a brief explanation of each column:
+![Episode Metrics](plots/episode-metrics.png)
 
-| **Column**   | **Explanation**                                                                 |
-|--------------|---------------------------------------------------------------------------------|
-| 動畫名稱       | The name of the animation.                                                     |
-| 集數         | The episode name.                                                              |
-| 上架時間       | The upload time of the episode.                                               |
-| 觀看數        | The view count of the episode.                                                |
-| 評論數        | The comment count of the episode.                                             |
+As shown above, the `danmu count` is located within a scrolldown element. To retrieve this information, dynamic web
+scraping techniques using `selenium` are required.
+The results are stored in the **Episode-Level Data** tab of
+the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+Below is a brief explanation of each column:
+
+| **Column** | **Explanation**                                                                                |
+|------------|------------------------------------------------------------------------------------------------|
+| 動畫名稱       | The name of the animation.                                                                     |
+| 集數         | The episode name.                                                                              |
+| 上架時間       | The upload time of the episode.                                                                |
+| 觀看數        | The view count of the episode.                                                                 |
+| 評論數        | The comment count of the episode.                                                              |
 | 評論轉換率      | Comment conversion rate (`comments / views`): measures the tendency to comment after watching. |
-| 彈幕數        | The number of danmu (user-generated subtitles/comments overlaid on the video). |
-| 彈幕轉換率      | Danmu conversion rate (`danmu / views`): measures the tendency to send danmu while watching. |
+| 彈幕數        | The number of danmu (user-generated subtitles/comments overlaid on the video).                 |
+| 彈幕轉換率      | Danmu conversion rate (`danmu / views`): measures the tendency to send danmu while watching.   |
 
 [Back to Contents](#contents)
 
 ---
+
 ## Exploratory Data Analysis <a name="eda"></a>
-After scraping data from the [Animation Crazy](https://ani.gamer.com.tw/) website, I conducted some exploratory data analysis (EDA) to gain insights from the data. 
+
+After scraping data from the [Animation Crazy](https://ani.gamer.com.tw/) website, I conducted some exploratory data
+analysis (EDA) to gain insights from the data.
 The implementation details can be found in the `eda.py` script within the `modules` folder.
 
 ### i. Viewers Are More Likely to Score Fewer-Episode Animations  <a name="scoreRateObserve"></a>
-When I sorted the animations by the scoring conversion rate (`total scorings / total views`) in descending order, I noticed that the top-rated animations were not necessarily the most popular ones, but rather those with fewer episodes. This led me to an interesting question: Are shorter anime more likely to trigger viewers to rate?
+
+When I sorted the animations by the scoring conversion rate (`total scorings / total views`) in descending order, I
+noticed that the top-rated animations were not necessarily the most popular ones, but rather those with fewer episodes.
+This led me to an interesting question: Are shorter anime more likely to trigger viewers to rate?
 
 ![score rate order](plots/score_rate_order.png)
 
-Intuitively, this makes sense: viewers are more likely to leave a rating after finishing the entire anime, and this process is easier with a fewer-episode anime. However, I wanted to confirm this assumption with statistical analysis.
+Intuitively, this makes sense: viewers are more likely to leave a rating after finishing the entire anime, and this
+process is easier with a fewer-episode anime. However, I wanted to confirm this assumption with statistical analysis.
 
-First, I calculated the correlation coefficient between `total episodes` and `scoring rate`, which came out to be around `-20%`. To further investigate whether this negative correlation is statistically significant, I built a regression model with `scoring rate` as the response variable and `total episodes` as the predictor.
+First, I calculated the correlation coefficient between `total episodes` and `scoring rate`, which came out to be
+around `-20%`. To further investigate whether this negative correlation is statistically significant, I built a
+regression model with `scoring rate` as the response variable and `total episodes` as the predictor.
 
 ![summary table](plots/summary-table.png)
 
-Although the P-value is quite small, the large number of observations (animations) relative to the number of parameters might make the result seem significant simply because of the sample size. To test this, I designed an experiment: I randomly selected 100 animations and built regression models based on their `scoring rate` and `total episodes`. I recorded the P-value and correlation coefficient for each model. This process was repeated 100 times, and the results are shown below:
-
+Although the P-value is quite small, the large number of observations (animations) relative to the number of parameters
+might make the result seem significant simply because of the sample size. To test this, I designed an experiment: I
+randomly selected 100 animations and built regression models based on their `scoring rate` and `total episodes`. I
+recorded the P-value and correlation coefficient for each model. This process was repeated 100 times, and the results
+are shown below:
 
 ![episode to score rate](plots/ep_count_to_score_rate_experiment.jpg)
 
-As shown in the plots above, all experiments demonstrated a negative correlation between `scoring rate` and `total episodes`, with most results being statistically significant. Therefore, I can conclude that viewers are more likely to score anime with fewer episodes.
-
+As shown in the plots above, all experiments demonstrated a negative correlation between `scoring rate`
+and `total episodes`, with most results being statistically significant. Therefore, I can conclude that viewers are more
+likely to score anime with fewer episodes.
 
 [Back to Contents](#contents)
 
 ---
+
 ### ii. Viewers Are More Likely to Comment on Bad Animations <a name="commentRateObserve"></a>
 
-In this analysis, I sorted episodes by their comment conversion rate (`comments / views`) in descending order. I noticed that an anime called **極速星舞** (HIGHSPEED Etoile) had several episodes with a surprisingly high commenting rate compared to other animations.
+In this analysis, I sorted episodes by their comment conversion rate (`comments / views`) in descending order. I noticed
+that an anime called **極速星舞** (HIGHSPEED Etoile) had several episodes with a surprisingly high commenting rate
+compared to other animations.
 
 ![comment rate order](plots/comment-rate-order.png)
 
-However, **極速星舞** is not a famous anime at all. I was curious about why viewers of this anime were so willing to leave comments. Then I discovered that the anime's score was only 1.5 out of 5, one of the lowest scores on Animation Crazy.
+However, **極速星舞** is not a famous anime at all. I was curious about why viewers of this anime were so willing to
+leave comments. Then I discovered that the anime's score was only 1.5 out of 5, one of the lowest scores on Animation
+Crazy.
 
 ![highspeed score](plots/highspeed-score.png)
 
 This led me to another assumption: Do viewers tend to leave comments when they watch a bad anime?
 
-To verify this, I used `commenting rate` as the response variable and `score` as the predictor to check if there's a significant negative relationship between the two.
+To verify this, I used `commenting rate` as the response variable and `score` as the predictor to check if there's a
+significant negative relationship between the two.
 
-The experiment method is similar to the previous one, but this time, I used `commenting rate` and `score` as variables. The P-value and correlation results are shown in the following plot:
+The experiment method is similar to the previous one, but this time, I used `commenting rate` and `score` as variables.
+The P-value and correlation results are shown in the following plot:
 
 ![score to comment rate](plots/score_to_comment_rate_experiment.jpg)
 
-Unlike the previous experiment, only a small proportion of the experiments showed significant results, and the correlation coefficients appeared random. 
+Unlike the previous experiment, only a small proportion of the experiments showed significant results, and the
+correlation coefficients appeared random.
 
-While the comments for **極速星舞** mainly criticize it as a bad animation, this behavior seems to be a special case, rather than a general trend for all low-rated animations. Therefore, I conclude that viewers are not necessarily more likely to leave comments for all poorly-rated anime, but rather, this is specific to **極速星舞**.
-
+While the comments for **極速星舞** mainly criticize it as a bad animation, this behavior seems to be a special case,
+rather than a general trend for all low-rated animations. Therefore, I conclude that viewers are not necessarily more
+likely to leave comments for all poorly-rated anime, but rather, this is specific to **極速星舞**.
 
 [Back to Contents](#contents)
 
 ---
 
 ## Extra Functionalities <a name="functions"></a>
-Using the data scraped from [Animation Crazy](https://ani.gamer.com.tw/) webpages, I developed two core functionalities and implemented them as API endpoints using `FastAPI`. 
-The implementation details can be found in the `api.py`, `review_analysis.py`, and `recommend.py` scripts within the `modules` folder.
 
+Using the data scraped from [Animation Crazy](https://ani.gamer.com.tw/) webpages, I developed two core functionalities
+and implemented them as API endpoints using `FastAPI`.
+The implementation details can be found in the `api.py`, `review_analysis.py`, and `recommend.py` scripts within
+the `modules` folder.
 
 ### i. Review Analysis <a name="reviewAnalysis"></a>
-Each episode includes comments and danmus. To gain insights into the overall audience sentiment, I created a functionality that analyzes these reviews through word frequency analysis. The process is as follows:
+
+Each episode includes comments and danmus. To gain insights into the overall audience sentiment, I created a
+functionality that analyzes these reviews through word frequency analysis. The process is as follows:
 
 1. Users select a specific episode of their chosen animation.
 2. The application dynamically scrapes all comments and danmus for that episode.
 3. Reviews are segmented using `Jieba`, with stop words removed.
 4. The top 20 most frequent words are identified and displayed.
 
-This functionality can be accessed through the **Episode Trend Analysis** tab in the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+This functionality can be accessed through the **Episode Trend Analysis** tab in
+the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
 
-### Example: Attack on Titan - Spoiler Alert!  
-In the **Episode Trend Analysis** tab, users can select their preferred anime to view both numeric trends and a chart displaying episode performance. 
-To analyze reviews for a specific episode, users must select the episode and press the designated button to trigger the review analysis.
+### Example: Attack on Titan - Spoiler Alert!
+
+In the **Episode Trend Analysis** tab, users can select their preferred anime to view both numeric trends and a chart
+displaying episode performance.
+To analyze reviews for a specific episode, users must select the episode and press the designated button to trigger the
+review analysis.
 
 ![Episode Trend](plots/episode-trend.png)
 
-Below is an example of a review analysis for a selected episode:  
+Below is an example of a review analysis for a selected episode:
 
 ![Review Analysis](plots/review-analysis.png)
 
-During my first run of this analysis, I noticed that **o7** (a text-based emoji representing a salute 🫡) was the most frequent word in the danmus. 
-This reminded me of the scene where Hange (漢吉) sacrifices herself to buy time for the flying boat. Many viewers expressed their respect by flooding the danmus with **o7**. 
-It was incredibly satisfying to see how this functionality captured that emotional moment for me.  
+During my first run of this analysis, I noticed that **o7** (a text-based emoji representing a salute 🫡) was the most
+frequent word in the danmus.
+This reminded me of the scene where Hange (漢吉) sacrifices herself to buy time for the flying boat. Many viewers
+expressed their respect by flooding the danmus with **o7**.
+It was incredibly satisfying to see how this functionality captured that emotional moment for me.
 
 ![AOT Danmu](plots/aot-danmu.png)
 
 **Observations:**  
-The review analysis functionality works exceptionally well for capturing trends in danmus, which are typically short and repetitive, making word frequency analysis highly effective. 
-However, it performs less effectively for analyzing comments, as they are often longer and more diverse in structure, requiring more advanced techniques to capture their essence.
+The review analysis functionality works exceptionally well for capturing trends in danmus, which are typically short and
+repetitive, making word frequency analysis highly effective.
+However, it performs less effectively for analyzing comments, as they are often longer and more diverse in structure,
+requiring more advanced techniques to capture their essence.
 
 [Back to Contents](#contents)
 
@@ -181,12 +227,9 @@ However, it performs less effectively for analyzing comments, as they are often 
 
 #### Anime Types Similarity
 
-
 #### Anime Introduction Similarity
 
-
 #### Extra Features
-
 
 #### Decision Formula
 
@@ -196,14 +239,20 @@ However, it performs less effectively for analyzing comments, as they are often 
 
 ## Google Sheet Development <a name="googleSheet"></a>
 
+[Back to Contents](#contents)
 
+---
+
+## References <a name="ref"></a>
+
+- [Dynamic Web Page Scraping With Python: A Guide to Scrape All Content](https://www.zenrows.com/blog/dynamic-web-pages-scraping-python#what-is-dynamic-website)
+- [[Python爬蟲實例] 巴哈姆特 動畫瘋：新手入門基礎網路爬蟲教學](https://blog.jiatool.com/posts/gamer_ani_spider/)
+- [Authentication — gspread 6.1.2 documentation](https://docs.gspread.org/en/latest/oauth2.html)
+- [Chinese BERT with Whole Word Masking](https://github.com/ymcui/Chinese-BERT-wwm)
+- [結巴(jieba)斷詞台灣繁體版本](https://github.com/ldkrsi/jieba-zh_TW)
+- [如何使用 Python 製作文字雲](https://tech.havocfuture.tw/blog/python-wordcloud-jieba)
+- [Wikipedia - Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index)
 
 [Back to Contents](#contents)
 
-## References <a name="ref"></a>
-- [[Python爬蟲實例] 巴哈姆特 動畫瘋：新手入門基礎網路爬蟲教學](https://blog.jiatool.com/posts/gamer_ani_spider/)
-- [Dynamic Web Page Scraping With Python: A Guide to Scrape All Content](https://www.zenrows.com/blog/dynamic-web-pages-scraping-python#what-is-dynamic-website)
-- [Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index)
-- [結巴(jieba)斷詞台灣繁體版本](https://github.com/ldkrsi/jieba-zh_TW)
-- [Chinese BERT with Whole Word Masking](https://github.com/ymcui/Chinese-BERT-wwm)
-- [Authentication — gspread 6.1.2 documentation](https://docs.gspread.org/en/latest/oauth2.html)
+
