@@ -192,6 +192,8 @@ functionality that analyzes these reviews through word frequency analysis. The p
 This functionality can be accessed through the **Episode Trend Analysis** tab in
 the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
 
+![review analysis demo](plots/review_analysis_demo.gif)
+
 ## Example: Attack on Titan - Spoiler Alert!
 
 In the **Episode Trend Analysis** tab, users can select their preferred anime to view both numeric trends and a chart
@@ -226,7 +228,16 @@ requiring more advanced techniques to capture their essence.
 ## ii. Recommendation System <a name="recommendation"></a>
 The second functionality is anime recommendation system. This feature allows users to select their favorite animations and also preference tendency (high score first, famous first or new works first) and then provide them couples of animation based on their decisions.
 
-![recommendation demo](plots/rec-demo.gif)
+1. Users select 1~3 liked animations.
+2. Determine their preference: higher score, more famous or newer works.
+3. Then my decision formula will sort and display the top 12 animations as recommended results.
+
+This functionality can be accessed through the **Anime Recommendation** tab in
+the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+
+![recommendation demo](plots/recommend-demo.gif)
+
+Following will show how I build the decision formula to recommend animations based on users' input.
 
 
 ### Anime Types Similarity
