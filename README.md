@@ -12,7 +12,7 @@ This project is developed purely out of personal interest and is not intended fo
 
 ---
 
-## Contents <a name="contents"></a>
+# Contents <a name="contents"></a>
 
 - [Web Crawler](#webCrawler)
     1. [Anime-level Data](#animeLevel)
@@ -28,11 +28,11 @@ This project is developed purely out of personal interest and is not intended fo
 
 ---
 
-## Web Crawler <a name="webCrawler"></a>
+# Web Crawler <a name="webCrawler"></a>
 
 Details of the implementation can be found in the `data.py` script in the `modules` folder.
 
-### i. Anime-level Data <a name="animeLevel"></a>
+## i. Anime-level Data <a name="animeLevel"></a>
 
 All authorized animations can be found on the "All Anime List" ([所有動畫](https://ani.gamer.com.tw/animeList.php)) tab
 of the Animation Crazy website.
@@ -71,7 +71,7 @@ Below is a brief explanation of each column:
 
 ---
 
-### ii. Episode-level Data <a name="episodeLevel"></a>
+## ii. Episode-level Data <a name="episodeLevel"></a>
 
 Each episode of an anime also includes metrics such as `view count`, `danmu count` (彈幕數), `comment count`, and more.
 
@@ -98,13 +98,13 @@ Below is a brief explanation of each column:
 
 ---
 
-## Exploratory Data Analysis <a name="eda"></a>
+# Exploratory Data Analysis <a name="eda"></a>
 
 After scraping data from the [Animation Crazy](https://ani.gamer.com.tw/) website, I conducted some exploratory data
 analysis (EDA) to gain insights from the data.
 The implementation details can be found in the `eda.py` script within the `modules` folder.
 
-### i. Viewers Are More Likely to Score Fewer-Episode Animations  <a name="scoreRateObserve"></a>
+## i. Viewers Are More Likely to Score Fewer-Episode Animations  <a name="scoreRateObserve"></a>
 
 When I sorted the animations by the scoring conversion rate (`total scorings / total views`) in descending order, I
 noticed that the top-rated animations were not necessarily the most popular ones, but rather those with fewer episodes.
@@ -137,7 +137,7 @@ likely to score anime with fewer episodes.
 
 ---
 
-### ii. Viewers Are More Likely to Comment on Bad Animations <a name="commentRateObserve"></a>
+## ii. Viewers Are More Likely to Comment on Bad Animations <a name="commentRateObserve"></a>
 
 In this analysis, I sorted episodes by their comment conversion rate (`comments / views`) in descending order. I noticed
 that an anime called **極速星舞** (HIGHSPEED Etoile) had several episodes with a surprisingly high commenting rate
@@ -172,14 +172,14 @@ likely to leave comments for all poorly-rated anime, but rather, this is specifi
 
 ---
 
-## Extra Functionalities <a name="functions"></a>
+# Extra Functionalities <a name="functions"></a>
 
 Using the data scraped from [Animation Crazy](https://ani.gamer.com.tw/) webpages, I developed two core functionalities
 and implemented them as API endpoints using `FastAPI`.
 The implementation details can be found in the `api.py`, `review_analysis.py`, and `recommend.py` scripts within
 the `modules` folder.
 
-### i. Review Analysis <a name="reviewAnalysis"></a>
+## i. Review Analysis <a name="reviewAnalysis"></a>
 
 Each episode includes comments and danmus. To gain insights into the overall audience sentiment, I created a
 functionality that analyzes these reviews through word frequency analysis. The process is as follows:
@@ -192,7 +192,9 @@ functionality that analyzes these reviews through word frequency analysis. The p
 This functionality can be accessed through the **Episode Trend Analysis** tab in
 the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
 
-### Example: Attack on Titan - Spoiler Alert!
+![review analysis demo](plots/review_analysis_demo.gif)
+
+## Example: Attack on Titan - Spoiler Alert!
 
 In the **Episode Trend Analysis** tab, users can select their preferred anime to view both numeric trends and a chart
 displaying episode performance.
@@ -223,27 +225,40 @@ requiring more advanced techniques to capture their essence.
 
 ---
 
-### ii. Recommendation System <a name="recommendation"></a>
+## ii. Recommendation System <a name="recommendation"></a>
+The second functionality is anime recommendation system. This feature allows users to select their favorite animations and also preference tendency (high score first, famous first or new works first) and then provide them couples of animation based on their decisions.
 
-#### Anime Types Similarity
+1. Users select 1~3 liked animations.
+2. Determine their preference: higher score, more famous or newer works.
+3. Then my decision formula will sort and display the top 12 animations as recommended results.
 
-#### Anime Introduction Similarity
+This functionality can be accessed through the **Anime Recommendation** tab in
+the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
 
-#### Extra Features
+![recommendation demo](plots/recommend-demo.gif)
 
-#### Decision Formula
+Following will show how I build the decision formula to recommend animations based on users' input.
+
+
+### Anime Types Similarity
+
+### Anime Introduction Similarity
+
+### Extra Features
+
+### Decision Formula
 
 [Back to Contents](#contents)
 
 ---
 
-## Google Sheet Development <a name="googleSheet"></a>
+# Google Sheet Development <a name="googleSheet"></a>
 
 [Back to Contents](#contents)
 
 ---
 
-## References <a name="ref"></a>
+# References <a name="ref"></a>
 
 - [Dynamic Web Page Scraping With Python: A Guide to Scrape All Content](https://www.zenrows.com/blog/dynamic-web-pages-scraping-python#what-is-dynamic-website)
 - [[Python爬蟲實例] 巴哈姆特 動畫瘋：新手入門基礎網路爬蟲教學](https://blog.jiatool.com/posts/gamer_ani_spider/)
