@@ -181,37 +181,30 @@ the `modules` folder.
 
 ## i. Review Analysis <a name="reviewAnalysis"></a>
 
-Each episode includes comments and danmus. To gain insights into the overall audience sentiment, I created a
-functionality that analyzes these reviews through word frequency analysis. The process is as follows:
+Each episode has comments and danmus. To better understand the overall sentiment of the audience, I developed a feature that analyzes these reviews through word frequency analysis. Here's how it works:
 
-1. Users select a specific episode of their chosen animation.
-2. The application dynamically scrapes all comments and danmus for that episode.
-3. Reviews are segmented using `Jieba`, with stop words removed.
+1. Users select a specific episode from their chosen animation.  
+2. The application scrapes all comments and danmus for that episode.  
+3. Reviews are processed using `Jieba`, with stop words removed.  
 4. The top 20 most frequent words are identified and displayed.
 
-This functionality can be accessed through the **Episode Trend Analysis** tab in
-the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+This functionality is available in the **Episode Trend Analysis** tab in the [spreadsheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+
 
 ![review analysis demo](plots/review_analysis_demo.gif)
 
-## Example: Attack on Titan - Spoiler Alert!
+### Example: Attack on Titan - Spoiler Alert!
 
-In the **Episode Trend Analysis** tab, users can select their preferred anime to view both numeric trends and a chart
-displaying episode performance.
-To analyze reviews for a specific episode, users must select the episode and press the designated button to trigger the
-review analysis.
+Let's use the finale of **Attack on Titan (進擊的巨人)** as an example to explore the insights we can gain from its reviews.
 
 ![Episode Trend](plots/episode-trend.png)
 
-Below is an example of a review analysis for a selected episode:
 
 ![Review Analysis](plots/review-analysis.png)
 
-During my first run of this analysis, I noticed that **o7** (a text-based emoji representing a salute 🫡) was the most
-frequent word in the danmus.
-This reminded me of the scene where Hange (漢吉) sacrifices herself to buy time for the flying boat. Many viewers
-expressed their respect by flooding the danmus with **o7**.
-It was incredibly satisfying to see how this functionality captured that emotional moment for me.
+The images above show the word frequency analysis for the episode's danmus and comments.
+
+During the first run of this analysis, I found that **o7** (a text-based emoji representing a salute 🫡) was the most frequent word in the danmus. This reminded me of the emotional moment when Hange (漢吉) sacrifices herself to buy time for the flying boat. Many viewers expressed their respect by flooding the danmus with **o7**. It was rewarding to see how this feature captured that emotional moment.
 
 ![AOT Danmu](plots/aot-danmu.png)
 
@@ -310,6 +303,10 @@ Where:
 2. **Extra Features** represent the transformed values for `Score`, `Popularity`, or `Release Date` based on the user's preference.  
 
 The top 12 anime with the highest **Main Metric** values are displayed as recommendations.
+
+
+**Observations:**  
+The anime recommendation system I developed works effectively in suggesting similar animations based on users' favorite works. It also allows users to set additional preferences for more accurate recommendations. After transforming the features, the system successfully minimizes the impact of outliers. For example, before the transformations, when users selected **More Popular First**, the system would always recommend **Demon Slayer**, even if their preferred anime types were quite different.
 
 
 [Back to Contents](#contents)
