@@ -1,14 +1,13 @@
 # Animation Crazy Analysis
 
-Animation Crazy ([巴哈姆特動畫瘋](https://ani.gamer.com.tw/)) is one of the most popular Japanese animation streaming
-platforms in Taiwan.  
-As a frequent user, I built this project to crawl anime viewing data and utilize this information to develop
-functionalities like review analysis and anime recommendations.  
-The results can be viewed in
-this [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+**Animation Crazy** ([巴哈姆特動畫瘋](https://ani.gamer.com.tw/)) is one of Taiwan's leading platforms for streaming Japanese animation. As an avid user, I decided to dive deeper into this rich world of anime and create a project that collects and analyzes viewing data from the platform. 
+
+The goal of this project is to develop meaningful features, such as **review analysis** and **anime recommendations**, that offer valuable insights to fellow anime enthusiasts. This side project spans across several areas, including **data collection**, **machine learning**, **natural language processing (NLP)**, and **API development**. 
+
+Explore the results and analysis in this [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
 
 **Disclaimer:**  
-This project is developed purely out of personal interest and is not intended for commercial use.
+This project is created purely for personal interest and is not intended for commercial use.
 
 ---
 
@@ -23,7 +22,6 @@ This project is developed purely out of personal interest and is not intended fo
 - [Extra Functionalities](#functions)
     1. [Review Analysis](#reviewAnalysis)
     2. [Recommendation System](#recommendation)
-- [Google Sheet Development](#googleSheet)
 - [References](#ref)
 
 ---
@@ -46,7 +44,7 @@ clicking on an individual anime, more detailed metrics like `launch date`, `scor
 
 This information is collected using static web scraping techniques (`requests` and `BeautifulSoup`) and stored in the *
 *Anime-Level Data** tab of
-the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+the [spreadsheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
 Below is a brief explanation of each column:
 
 | **Column** | **Explanation**                                                                                          |
@@ -80,7 +78,7 @@ Each episode of an anime also includes metrics such as `view count`, `danmu coun
 As shown above, the `danmu count` is located within a scrolldown element. To retrieve this information, dynamic web
 scraping techniques using `selenium` are required.
 The results are stored in the **Episode-Level Data** tab of
-the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+the [spreadsheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
 Below is a brief explanation of each column:
 
 | **Column** | **Explanation**                                                                                |
@@ -228,7 +226,7 @@ The second feature is the anime recommendation system. This allows users to sele
    - **Newer Releases First**  
 3. The system uses a decision formula to rank and display the top 12 recommended animations.
 
-This feature is available in the **Anime Recommendation** tab of the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+This feature is available in the **Anime Recommendation** tab of the [spreadsheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
 
 
 ![recommendation demo](plots/recommend-demo.gif)
@@ -308,12 +306,6 @@ The top 12 anime with the highest **Main Metric** values are displayed as recomm
 **Observations:**  
 The anime recommendation system I developed works effectively in suggesting similar animations based on users' favorite works. It also allows users to set additional preferences for more accurate recommendations. After transforming the features, the system successfully minimizes the impact of outliers. For example, before the transformations, when users selected **More Popular First**, the system would always recommend **Demon Slayer**, even if their preferred anime types were quite different.
 
-
-[Back to Contents](#contents)
-
----
-
-# Google Sheet Development <a name="googleSheet"></a>
 
 [Back to Contents](#contents)
 
