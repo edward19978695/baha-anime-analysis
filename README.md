@@ -181,37 +181,30 @@ the `modules` folder.
 
 ## i. Review Analysis <a name="reviewAnalysis"></a>
 
-Each episode includes comments and danmus. To gain insights into the overall audience sentiment, I created a
-functionality that analyzes these reviews through word frequency analysis. The process is as follows:
+Each episode has comments and danmus. To better understand the overall sentiment of the audience, I developed a feature that analyzes these reviews through word frequency analysis. Here's how it works:
 
-1. Users select a specific episode of their chosen animation.
-2. The application dynamically scrapes all comments and danmus for that episode.
-3. Reviews are segmented using `Jieba`, with stop words removed.
+1. Users select a specific episode from their chosen animation.  
+2. The application scrapes all comments and danmus for that episode.  
+3. Reviews are processed using `Jieba`, with stop words removed.  
 4. The top 20 most frequent words are identified and displayed.
 
-This functionality can be accessed through the **Episode Trend Analysis** tab in
-the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+This functionality is available in the **Episode Trend Analysis** tab in the [spreadsheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+
 
 ![review analysis demo](plots/review_analysis_demo.gif)
 
-## Example: Attack on Titan - Spoiler Alert!
+### Example: Attack on Titan - Spoiler Alert!
 
-In the **Episode Trend Analysis** tab, users can select their preferred anime to view both numeric trends and a chart
-displaying episode performance.
-To analyze reviews for a specific episode, users must select the episode and press the designated button to trigger the
-review analysis.
+Let's use the finale of **Attack on Titan (進擊的巨人)** as an example to explore the insights we can gain from its reviews.
 
 ![Episode Trend](plots/episode-trend.png)
 
-Below is an example of a review analysis for a selected episode:
 
 ![Review Analysis](plots/review-analysis.png)
 
-During my first run of this analysis, I noticed that **o7** (a text-based emoji representing a salute 🫡) was the most
-frequent word in the danmus.
-This reminded me of the scene where Hange (漢吉) sacrifices herself to buy time for the flying boat. Many viewers
-expressed their respect by flooding the danmus with **o7**.
-It was incredibly satisfying to see how this functionality captured that emotional moment for me.
+The images above show the word frequency analysis for the episode's danmus and comments.
+
+During the first run of this analysis, I found that **o7** (a text-based emoji representing a salute 🫡) was the most frequent word in the danmus. This reminded me of the emotional moment when Hange (漢吉) sacrifices herself to buy time for the flying boat. Many viewers expressed their respect by flooding the danmus with **o7**. It was rewarding to see how this feature captured that emotional moment.
 
 ![AOT Danmu](plots/aot-danmu.png)
 
@@ -226,27 +219,95 @@ requiring more advanced techniques to capture their essence.
 ---
 
 ## ii. Recommendation System <a name="recommendation"></a>
-The second functionality is anime recommendation system. This feature allows users to select their favorite animations and also preference tendency (high score first, famous first or new works first) and then provide them couples of animation based on their decisions.
+The second feature is the anime recommendation system. This allows users to select their favorite anime and set their preference for recommendations (e.g., prioritize higher scores, popularity, or newer releases). Based on these inputs, the system provides a list of recommended anime.
 
-1. Users select 1~3 liked animations.
-2. Determine their preference: higher score, more famous or newer works.
-3. Then my decision formula will sort and display the top 12 animations as recommended results.
+1. Users select 1 to 3 favorite anime.  
+2. Choose preference types:  
+   - **Higher Scores First**  
+   - **More Popular First**  
+   - **Newer Releases First**  
+3. The system uses a decision formula to rank and display the top 12 recommended animations.
 
-This functionality can be accessed through the **Anime Recommendation** tab in
-the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+This feature is available in the **Anime Recommendation** tab of the [Google Sheet](https://docs.google.com/spreadsheets/d/1F94CV-TTa628TumABt3DOF_beqJxQTJ-Mjp1nHkWQDE/edit?usp=sharing).
+
 
 ![recommendation demo](plots/recommend-demo.gif)
 
-Following will show how I build the decision formula to recommend animations based on users' input.
+Below is an explanation of how the decision formula generates recommendations based on user inputs.
 
+---
 
 ### Anime Types Similarity
+To recommend anime, the system calculates the similarity between each pair of anime based on their types using the **Jaccard Index**.
+
+![jaccard index](plots/jaccard-index.png)
+
+Consider two anime: **Jujutsu Kaisen (咒術迴戰)** and **Demon Slayer (鬼滅之刃)**.
+
+| **Anime**      | **Types**              |
+|----------------|------------------------|
+| Jujutsu Kaisen | 動作、奇幻、超能力、校園、血腥暴力、靈異神怪 |
+| Demon Slayer   | 動作、冒險、奇幻、血腥暴力          |
+
+Thus, their **Types-Based Similarity Score** is:  
+
+![Jaccard Example](plots/jaccard-example.png)
+
+By definition, the **Jaccard Index** ensures that the similarity score will always fall between 0 and 1.
+
+
+
+---
 
 ### Anime Introduction Similarity
+In addition to comparing anime by types, I also analyzed the similarity of anime introductions to measure the connection between two works.
+
+1. Used the `RoBERTa-wwm-ext, Chinese` NLP model to process introductions collected from Animation Crazy.  
+2. Extracted the embedding vector of the **CLS token** as the feature vector for each introduction.  
+3. Calculated cosine similarity between the feature vectors of each pair of anime.
+
+Since cosine similarity values range between -1 and 1, I used a `MinMaxScaler` to map them into the `[0, 1]` range, resulting in **Intro-Based Similarity Scores**.
+
+---
 
 ### Extra Features
+Beyond similarity scores, users can customize their recommendations by choosing the following additional features:  
+- **Score**  
+- **Popularity**  
+- **Release Date**  
+
+The chart below shows the original distributions of these features for all animations in Animation Crazy:
+
+![Original distribution](plots/original-distribution.jpg)
+
+- **Score** and **Release Date** have left-skewed distributions.  
+- **Popularity** has a right-skewed distribution.  
+
+To make these features more balanced and scaled to `[0, 1]`, I applied the following transformations:  
+1. For **Score** and **Release Date**: Standardization → Exponential Transformation → Min-Max Scaling.  
+2. For **Popularity**: Natural Log Transformation → Min-Max Scaling.  
+
+The transformed distributions are shown below:
+
+![Transformed distribution](plots/transformed-distribution.jpg)
+
+---
 
 ### Decision Formula
+After calculating similarity scores and transforming extra features, the final decision formula is as follows:
+
+![formula](plots/main-metric-formula.png)
+
+Where:  
+1. **Similarity** is the average of the **Types-Based Similarity Score** and the **Intro-Based Similarity Score** between users' selected anime and all others.  
+2. **Extra Features** represent the transformed values for `Score`, `Popularity`, or `Release Date` based on the user's preference.  
+
+The top 12 anime with the highest **Main Metric** values are displayed as recommendations.
+
+
+**Observations:**  
+The anime recommendation system I developed works effectively in suggesting similar animations based on users' favorite works. It also allows users to set additional preferences for more accurate recommendations. After transforming the features, the system successfully minimizes the impact of outliers. For example, before the transformations, when users selected **More Popular First**, the system would always recommend **Demon Slayer**, even if their preferred anime types were quite different.
+
 
 [Back to Contents](#contents)
 
