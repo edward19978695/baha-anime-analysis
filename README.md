@@ -28,7 +28,7 @@ This project is created purely for personal interest and is not intended for com
 
 # Web Crawler <a name="webCrawler"></a>
 
-Details of the implementation can be found in the `data.py` script in the `modules` folder.
+Details of the implementation can be found in [data.py](modules/data.py) script.
 
 ## i. Anime-level Data <a name="animeLevel"></a>
 
@@ -100,7 +100,7 @@ Below is a brief explanation of each column:
 
 After scraping data from the [Animation Crazy](https://ani.gamer.com.tw/) website, I conducted some exploratory data
 analysis (EDA) to gain insights from the data.
-The implementation details can be found in the `eda.py` script within the `modules` folder.
+The implementation details can be found in [eda.py](modules/eda.py) script.
 
 ## i. Viewers Are More Likely to Score Fewer-Episode Animations  <a name="scoreRateObserve"></a>
 
@@ -174,8 +174,7 @@ likely to leave comments for all poorly-rated anime, but rather, this is specifi
 
 Using the data scraped from [Animation Crazy](https://ani.gamer.com.tw/) webpages, I developed two core functionalities
 and implemented them as API endpoints using `FastAPI`.
-The implementation details can be found in the `api.py`, `review_analysis.py`, and `recommend.py` scripts within
-the `modules` folder.
+The implementation details can be found in [api.py](modules/api.py), [review_analysis.py](modules/review_analysis.py), and [recommend.py](modules/recommend.py) scripts.
 
 ## i. Review Analysis <a name="reviewAnalysis"></a>
 
