@@ -1,7 +1,7 @@
 """
 Global settings are managed here.
 """
-service_account_file = 'conf/anime-analysis-440305-e98f2c850a51.json'   # credential key from google console
+service_account_file = 'conf/anime-analysis-440305-14c680a5f000.json'   # credential key from google console
 scope = [
     'https://www.googleapis.com/auth/spreadsheets',
     'https://www.googleapis.com/auth/drive'

@@ -15,6 +15,8 @@ from gspread_formatting import (
 import gspread
 import gspread.utils
 import time
+import tempfile
+import shutil
 import pandas as pd
 import numpy as np
 import requests
@@ -183,6 +185,11 @@ class WebCrawl:
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
 
+        # Use a custom temporary user-data-dir to avoid clutter
+        user_data_dir = tempfile.mkdtemp()
+
+        options.add_argument(f'--user-data-dir={user_data_dir}')
+
         # Set up Selenium with the WebDriver
         driver = webdriver.Chrome(options=options)  # or use webdriver.Firefox() if you're using Firefox
 
@@ -210,6 +217,9 @@ class WebCrawl:
         else:
             danmu_count = re.search(r'\d+', danmu.text)
             danmu_count = int(danmu_count.group()) if danmu_count is not None else 0
+
+        driver.quit()
+        shutil.rmtree(user_data_dir, ignore_errors=True)
 
         return episode_name, uploaded_time, view, comment_count, danmu_count
 
@@ -271,6 +281,7 @@ class UpdateSheet:
     """
     A class that updates Anime and Episode-level data in Google Sheet.
     """
+
     def __init__(self):
         # Authenticate with Google
         self.creds = Credentials.from_service_account_file(settings.service_account_file,
@@ -412,6 +423,6 @@ class UpdateSheet:
 if __name__ == '__main__':
     print('Start Crawling and Importing data to spreadsheet...')
     us = UpdateSheet()
-    us.anime_level()
+    # us.anime_level()
     us.episode_level()
     print('Finish!!!!!')
