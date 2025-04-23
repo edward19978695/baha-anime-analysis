@@ -39,11 +39,14 @@ column_names = {
     'episode_level': {
         'anime_name': '動畫名稱',
         'episode_name': '集數',
+        'episode_order': 'Episode Order',
         'uploaded_time': '上架時間',
 
         'view': '觀看數',
         'comment_count': '評論數',
-        'danmu_count': '彈幕數'
+        'comment_rate': '評論轉換率',
+        'danmu_count': '彈幕數',
+        'danmu_rate': '彈幕轉換率'
     }
 }
 

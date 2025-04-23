@@ -366,6 +366,25 @@ class UpdateSheet:
         print('Finish extracting data from web, start import data to spreadsheet...')
         column_names = settings.column_names['episode_level']
 
+        # Define a function to extract the numeric part
+        def extract_numeric(episode):
+            match = re.search(r'\d+(\.\d+)?', episode)
+            return float(match.group()) if match else 0.0
+
+        def compute_rate(view, count):
+            if pd.isna(view) or view == '':
+                return None
+            return float(count) / float(view) if pd.notna(count) and count != '' else 0.0
+
+        # Apply the function to create the new column
+        df_all_episode['episode_order'] = df_all_episode['episode_name'].apply(extract_numeric)
+
+        df_all_episode['comment_rate'] = df_all_episode.apply(
+            lambda row: compute_rate(row['view'], row['comment_count']), axis=1)
+
+        df_all_episode['danmu_rate'] = df_all_episode.apply(
+            lambda row: compute_rate(row['view'], row['danmu_count']), axis=1)
+
         df_all_episode = df_all_episode.fillna('')
 
         # Step 1: Convert all values to string and handle encoding issues
@@ -423,6 +442,6 @@ class UpdateSheet:
 if __name__ == '__main__':
     print('Start Crawling and Importing data to spreadsheet...')
     us = UpdateSheet()
-    # us.anime_level()
+    us.anime_level()
     us.episode_level()
     print('Finish!!!!!')
